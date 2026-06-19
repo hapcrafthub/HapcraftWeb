@@ -1,0 +1,25 @@
+node_modules
+dist
+
+# Reference / design source material - not used at runtime
+design-file2.bin
+design-file2.tar
+avi-hap/
+design2/
+assets-dl/
+top-strip.png
+
+dist-ssr
+*.local
+.env
+.env.*
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
