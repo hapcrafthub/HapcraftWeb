@@ -14,13 +14,13 @@ import ServicesPage from "./pages/ServicesPage";
 import SiteFooter from "./components/SiteFooter";
 import IntroLoader from "./components/IntroLoader";
 
-const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload/q_auto,f_auto";
-const hapVideo = `${CLOUDINARY}/Hap_vp_hxkmwn.mp4`;
-const crowdVideo = `${CLOUDINARY}/Crowd_enjoying_at_function_202606132324_dt4bwe.mp4`;
-const barVideo1 = `${CLOUDINARY}/km_20260614_1080p_30f_20260614_015516_zqyyp3.mp4`;
-const barVideo2 = `${CLOUDINARY}/Indian_couple_posing_professionally_202606140158_tn9k9u.mp4`;
-const barVideo3 = `${CLOUDINARY}/Indian_guy_doing_act_202606140159_z0iqja.mp4`;
-const barVideo4 = `${CLOUDINARY}/km_20260614-1_1080p_30f_20260614_015641_gquod9.mp4`;
+const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
+const hapVideo = `${CLOUDINARY}/q_auto,f_auto,w_900/Hap_vp_hxkmwn.mp4`;
+const crowdVideo = `${CLOUDINARY}/q_auto,f_auto,w_1200/Crowd_enjoying_at_function_202606132324_dt4bwe.mp4`;
+const barVideo1 = `${CLOUDINARY}/q_auto,f_auto,w_600/Indian_couple_posing_professionally_202606140158_tn9k9u.mp4`;
+const barVideo2 = `${CLOUDINARY}/q_auto,f_auto,w_600/Indian_guy_doing_act_202606140159_z0iqja.mp4`;
+const barVideo3 = `${CLOUDINARY}/q_auto,f_auto,w_600/km_20260614_1080p_30f_20260614_015516_zqyyp3.mp4`;
+const barVideo4 = `${CLOUDINARY}/q_auto,f_auto,w_600/km_20260614-1_1080p_30f_20260614_015641_gquod9.mp4`;
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
 
@@ -203,16 +203,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           <div className="intro-left">
             <div className="headline-art">
               <span className="bar bar-1">
-                <video src={barVideo1} autoPlay loop muted playsInline />
+                <video src={barVideo1} autoPlay loop muted playsInline preload="auto" />
               </span>
               <span className="bar bar-2">
-                <video src={barVideo2} autoPlay loop muted playsInline />
+                <video src={barVideo2} autoPlay loop muted playsInline preload="auto" />
               </span>
               <span className="bar bar-3">
-                <video src={barVideo3} autoPlay loop muted playsInline />
+                <video src={barVideo3} autoPlay loop muted playsInline preload="auto" />
               </span>
               <span className="bar bar-4">
-                <video src={barVideo4} autoPlay loop muted playsInline />
+                <video src={barVideo4} autoPlay loop muted playsInline preload="auto" />
               </span>
               <h1 className="headline">
                 <span>We are</span>
