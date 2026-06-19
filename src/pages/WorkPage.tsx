@@ -35,7 +35,7 @@ const groups: WorkGroup[] = [
       title: "co-Organised one of the world's biggest Event",
       description: "We co-organized the Antarrashtriya Arya Mahasammelan 2025 in Delhi, managing the Vedic lifestyle and ancient education system vertical. The event successfully catered to a gathering of over 4.5 lakh people.",
       image: crowdAerial,
-      hoverVideo: "/crowd.mp4",
+      hoverVideo: "https://res.cloudinary.com/di1udlyci/video/upload/q_auto,f_auto/Crowd_enjoying_at_function_202606132324_dt4bwe.mp4",
     },
     small1: {
       title: "Honoured to be the strategic partner in the government program",

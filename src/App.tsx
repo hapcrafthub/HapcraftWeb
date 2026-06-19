@@ -14,7 +14,13 @@ import ServicesPage from "./pages/ServicesPage";
 import SiteFooter from "./components/SiteFooter";
 import IntroLoader from "./components/IntroLoader";
 
-const hapVideo = "/hap-video.mp4";
+const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload/q_auto,f_auto";
+const hapVideo = `${CLOUDINARY}/Hap_vp_hxkmwn.mp4`;
+const crowdVideo = `${CLOUDINARY}/Crowd_enjoying_at_function_202606132324_dt4bwe.mp4`;
+const barVideo1 = `${CLOUDINARY}/km_20260614_1080p_30f_20260614_015516_zqyyp3.mp4`;
+const barVideo2 = `${CLOUDINARY}/Indian_couple_posing_professionally_202606140158_tn9k9u.mp4`;
+const barVideo3 = `${CLOUDINARY}/Indian_guy_doing_act_202606140159_z0iqja.mp4`;
+const barVideo4 = `${CLOUDINARY}/km_20260614-1_1080p_30f_20260614_015641_gquod9.mp4`;
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
 
@@ -22,7 +28,7 @@ const cards: Card[] = [
   {
     imageSide: "left",
     image: crowdAerial,
-    hoverVideo: "/crowd.mp4",
+    hoverVideo: crowdVideo,
     title: "co-Organised one of the world's biggest Event",
     summary: "We co-organized the Antarrashtriya Arya Mahasammelan 2025 in Delhi, managing the Vedic lifestyle and ancient education system vertical. The event successfully catered to a gathering of over 4.5 lakh people.",
   },
@@ -197,16 +203,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           <div className="intro-left">
             <div className="headline-art">
               <span className="bar bar-1">
-                <video src="/bar-1.mp4" autoPlay loop muted playsInline />
+                <video src={barVideo1} autoPlay loop muted playsInline />
               </span>
               <span className="bar bar-2">
-                <video src="/bar-2.mp4" autoPlay loop muted playsInline />
+                <video src={barVideo2} autoPlay loop muted playsInline />
               </span>
               <span className="bar bar-3">
-                <video src="/bar-3.mp4" autoPlay loop muted playsInline />
+                <video src={barVideo3} autoPlay loop muted playsInline />
               </span>
               <span className="bar bar-4">
-                <video src="/bar-4.mp4" autoPlay loop muted playsInline />
+                <video src={barVideo4} autoPlay loop muted playsInline />
               </span>
               <h1 className="headline">
                 <span>We are</span>
