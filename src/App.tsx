@@ -19,9 +19,9 @@ const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15,br_300k,vc_h264";
 const hapVideo = `${CLOUDINARY}/q_auto,f_auto,w_800,fps_24/Hap_vp_hxkmwn.mp4`;
 const crowdVideo = `${CLOUDINARY}/q_auto,f_auto,w_900/Crowd_enjoying_at_function_202606132324_dt4bwe.mp4`;
 const barVideo1 = `${CLOUDINARY}/${BAR_TX}/Indian_couple_posing_professionally_202606140158_tn9k9u.mp4`;
-const barVideo2 = `${CLOUDINARY}/${BAR_TX}/Indian_guy_doing_act_202606140159_z0iqja.mp4`;
+const barVideo2 = `${CLOUDINARY}/${BAR_TX}/km_20260614-1_1080p_30f_20260614_015641_gquod9.mp4`;
 const barVideo3 = `${CLOUDINARY}/${BAR_TX}/km_20260614_1080p_30f_20260614_015516_zqyyp3.mp4`;
-const barVideo4 = `${CLOUDINARY}/${BAR_TX}/km_20260614-1_1080p_30f_20260614_015641_gquod9.mp4`;
+const barVideo4 = `${CLOUDINARY}/${BAR_TX}/Indian_guy_doing_act_202606140159_z0iqja.mp4`;
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
 
