@@ -212,19 +212,34 @@ function HomeCard({ card }: { card: Card }) {
   const [hovered, setHovered] = useState(false);
   const lowPower = useLowPowerDevice();
 
+  const playVideo = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+    v.play().catch(() => {});
+  };
+  const stopVideo = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    v.currentTime = 0;
+  };
+
   const handleMouseEnter = () => {
     if (!card.hoverVideo || lowPower) return;
     setHovered(true);
-    const v = videoRef.current;
-    if (v) {
-      if (!v.src && v.dataset.src) v.src = v.dataset.src;
-      v.play().catch(() => {});
-    }
+    playVideo();
   };
   const handleMouseLeave = () => {
     if (!card.hoverVideo || lowPower) return;
     setHovered(false);
-    if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
+    stopVideo();
+  };
+  const handleTouch = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch" || !card.hoverVideo || lowPower) return;
+    e.preventDefault();
+    if (hovered) { setHovered(false); stopVideo(); }
+    else { setHovered(true); playVideo(); }
   };
 
   return (
@@ -232,6 +247,7 @@ function HomeCard({ card }: { card: Card }) {
       className={`card img-${card.imageSide}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onPointerDown={handleTouch}
     >
       <div className="card-media">
         <img src={card.image ?? eventPhoto} alt="Event" />
@@ -260,6 +276,15 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
   const [cardsExpanded, setCardsExpanded] = useState(false);
   useReveal();
   useLazyVideoLoader();
+
+  useEffect(() => {
+    if (!cardsExpanded) return;
+    const t = setTimeout(() => {
+      document.querySelectorAll(".work-cards-expand .reveal:not(.is-visible)")
+        .forEach(el => el.classList.add("is-visible"));
+    }, 80);
+    return () => clearTimeout(t);
+  }, [cardsExpanded]);
   return (
     <div className="page">
       {/* ===================== HERO ===================== */}
@@ -306,9 +331,9 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="110" height="110" viewBox="0 0 110 110" fill="none" aria-hidden="true">
-            <line x1="22" y1="88" x2="88" y2="22" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round"/>
-            <polyline points="44,22 88,22 88,66" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          {/* Arrow derived from the right-pointing triangle cutout inside the "P" of the HAP logo */}
+          <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
+            <path d="M10 6 L10 90 L68 48 Z" fill="var(--orange)" opacity="0.82" />
           </svg>
           {(
             [
@@ -383,9 +408,14 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
               aria-expanded={cardsExpanded}
               aria-label={cardsExpanded ? "Show less" : "See more work"}
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M4 7L10 13L16 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <span className="work-expand-line" />
+              <span className="work-expand-inner">
+                {cardsExpanded ? "Show Less" : "See More Work"}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M2.5 5L7 9.5L11.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span className="work-expand-line" />
             </button>
 
             <div className={`work-cards-expand${cardsExpanded ? " is-open" : ""}`} aria-hidden={!cardsExpanded}>

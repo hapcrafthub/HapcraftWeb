@@ -91,15 +91,18 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
 
-  const handleMouseEnter = () => {
-    if (!card.hoverVideo) return;
-    setHovered(true);
-    videoRef.current?.play();
-  };
-  const handleMouseLeave = () => {
-    if (!card.hoverVideo) return;
-    setHovered(false);
+  const playVideo = () => { videoRef.current?.play().catch(() => {}); };
+  const stopVideo = () => {
     if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
+  };
+
+  const handleMouseEnter = () => { if (!card.hoverVideo) return; setHovered(true); playVideo(); };
+  const handleMouseLeave = () => { if (!card.hoverVideo) return; setHovered(false); stopVideo(); };
+  const handleTouch = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch" || !card.hoverVideo) return;
+    e.preventDefault();
+    if (hovered) { setHovered(false); stopVideo(); }
+    else { setHovered(true); playVideo(); }
   };
 
   const isLarge = slot === "large";
@@ -109,6 +112,7 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
       className={`wp-card wp-card--${slot} ${isLarge ? "wp-card--col" : "wp-card--row"}${card.contain ? " wp-card--contain" : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onPointerDown={handleTouch}
     >
       <div className="wp-card__media">
         <img src={card.image ?? crowdAerial} alt={card.title} loading="lazy" />
@@ -169,9 +173,8 @@ export default function WorkPage() {
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="110" height="110" viewBox="0 0 110 110" fill="none" aria-hidden="true">
-            <line x1="22" y1="88" x2="88" y2="22" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round"/>
-            <polyline points="44,22 88,22 88,66" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
+            <path d="M10 6 L10 90 L68 48 Z" fill="var(--orange)" opacity="0.82" />
           </svg>
           {([
             { label: "Home",         to: "/" },
