@@ -34,7 +34,7 @@
 }
 
 /* =================================================================
-   INTRO LOADER  (HAP letter-reveal on page load — BBDO-style wipe)
+   INTRO LOADER  (clean overlay — wordmark fade on page load)
    ================================================================= */
 .il {
   position: fixed;
@@ -54,54 +54,16 @@
   pointer-events: none;
 }
 
-/* Radial orange glow in center — mirrors BBDO's bg gradient */
-.il-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 55% 40% at 50% 50%, rgba(255, 122, 35, 0.18) 0%, transparent 70%);
-  animation: il-glow-pulse 1.8s ease-out forwards;
-}
-@keyframes il-glow-pulse {
-  0%   { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-.il-logo-wrap {
-  position: relative;
-  width: clamp(300px, 52vw, 700px);
-  /* crop off the "HAPCRAFT MEDIA" text (bottom ~28% of image) */
-  aspect-ratio: 3.13 / 1;
-  overflow: hidden;
-}
-
-.il-logo {
-  width: 100%;
+.il-wordmark {
+  width: clamp(110px, 14vw, 180px);
   height: auto;
-  display: block;
+  opacity: 0;
+  animation: il-wordmark-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.1s;
 }
-
-/* Ghost — dim white silhouette */
-.il-logo-ghost {
-  opacity: 0.09;
-  filter: brightness(0) invert(1);
-}
-
-/* Fill — wiped in as orange (#ff7a23):
-   brightness(0) → black, invert(1) → white,
-   sepia+saturate+hue-rotate tints to our orange */
-.il-logo-fill {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(0 100% 0 0);
-  animation: il-wipe 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-  animation-delay: 0.15s;
-  filter: brightness(0) invert(49%) sepia(96%) saturate(1021%) hue-rotate(349deg) brightness(101%) contrast(101%);
-}
-
-@keyframes il-wipe {
-  0%   { clip-path: inset(0 100% 0 0); }
-  100% { clip-path: inset(0 0%   0 0); }
+@keyframes il-wordmark-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
 }
 
 html {
@@ -420,7 +382,7 @@ img {
 
 .card {
   display: flex;
-  height: 394px;
+  min-height: 320px;
   background: var(--cream);
   border-radius: 20px;
   overflow: hidden;
@@ -429,8 +391,7 @@ img {
   flex-direction: row-reverse;
 }
 .card-media {
-  flex: 0 0 508px;
-  height: 100%;
+  flex: 0 0 clamp(260px, 42%, 508px);
   position: relative;
   overflow: hidden;
 }
@@ -465,26 +426,82 @@ img {
 }
 .card-body h3 {
   font-weight: 700;
-  font-size: 40px;
-  line-height: 1;
+  font-size: clamp(20px, 3.2vw, 40px);
+  line-height: 1.05;
   text-transform: capitalize;
-  margin-bottom: 33px;
+  margin-bottom: clamp(16px, 2vw, 33px);
   max-width: 635px;
 }
 .card-date {
   display: block;
   font-weight: 600;
-  font-size: 26px;
+  font-size: clamp(15px, 2vw, 26px);
   color: var(--muted);
   text-transform: capitalize;
-  margin-bottom: 19px;
+  margin-bottom: clamp(10px, 1.2vw, 19px);
 }
 .card-body p {
   max-width: 605px;
   font-weight: 400;
-  font-size: 26px;
-  line-height: 1;
+  font-size: clamp(14px, 2vw, 26px);
+  line-height: 1.2;
   text-transform: capitalize;
+}
+
+/* Expandable cards toggle */
+.work-expand-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.work-expand-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(249, 246, 231, 0.22);
+  background: rgba(249, 246, 231, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(249, 246, 231, 0.65);
+  flex-shrink: 0;
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+}
+.work-expand-btn svg {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.work-expand-btn.is-open svg {
+  transform: rotate(180deg);
+}
+.work-expand-btn:hover {
+  background: rgba(249, 246, 231, 0.12);
+  border-color: rgba(249, 246, 231, 0.45);
+  color: var(--cream);
+}
+.work-cards-expand {
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+  pointer-events: none;
+}
+.work-cards-expand.is-open {
+  max-height: 4200px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.work-cards-expand-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 39px;
+  padding-top: 39px;
 }
 
 .work-cta {
@@ -621,7 +638,7 @@ img {
   font-weight: 700;
   margin-right: 0.55em;
 }
-.nav-overlay__spark {
+.nav-overlay__arrow {
   position: absolute;
   right: 5%;
   top: 10%;
@@ -696,7 +713,7 @@ img {
 .wp-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 300px 300px;
+  grid-template-rows: clamp(240px, 22vw, 320px) clamp(240px, 22vw, 320px);
   gap: 20px;
 }
 .wp-group--left {
@@ -1534,30 +1551,59 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(20px,2.5vw,32px) clamp(16px,2vw,28px);
+  gap: 16px;
+  padding: clamp(20px,2.5vw,32px) clamp(20px,5vw,72px);
   border-top: 1px solid rgba(249,246,231,0.12);
   background: #000;
   font-family: 'Hanken Grotesk', system-ui, sans-serif;
   position: relative;
   z-index: 1;
+  flex-wrap: wrap;
 }
 .site-footer__copy {
   font-weight: 700;
-  font-size: clamp(12px,1vw,14px);
+  font-size: clamp(11px, 1vw, 14px);
   color: var(--cream);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  min-width: 0;
 }
 .site-footer__email {
   font-weight: 700;
-  font-size: clamp(12px,1vw,14px);
+  font-size: clamp(11px, 1vw, 14px);
   color: var(--cream);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   text-decoration: none;
   transition: color 0.18s ease;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .site-footer__email:hover { color: var(--orange); }
+
+@media (max-width: 600px) {
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 24px 20px;
+  }
+  .site-footer__copy,
+  .site-footer__email {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .site-footer {
+    padding: 22px 32px;
+  }
+  .site-footer__copy,
+  .site-footer__email {
+    font-size: 12px;
+  }
+}
 
 /* =================================================================
    SERVICES PAGE v2  (/services)
@@ -1778,17 +1824,23 @@ img {
     padding: 0 16px 0 0;
   }
   .card-body {
-    padding: 32px 40px;
-  }
-  .card-body h3 {
-    font-size: clamp(26px, 3.4vw, 40px);
-  }
-  .card-body p,
-  .card-date {
-    font-size: clamp(18px, 2.2vw, 26px);
+    padding: 28px 32px;
   }
   .intro-copy {
     font-size: clamp(20px, 2.6vw, 27.7px);
+  }
+}
+
+/* Mid-tablet — cards start feeling tight horizontally */
+@media (max-width: 960px) {
+  .card {
+    min-height: 280px;
+  }
+  .card-media {
+    flex: 0 0 clamp(200px, 40%, 380px);
+  }
+  .card-body {
+    padding: 24px 28px;
   }
 }
 
@@ -1856,13 +1908,13 @@ img {
 
   .card {
     flex-direction: column;
-    height: auto;
+    min-height: auto;
   }
   .card.img-right {
     flex-direction: column;
   }
   .card-media {
-    flex: 0 0 240px;
+    flex: 0 0 clamp(180px, 55vw, 260px);
     width: 100%;
   }
   .card-body {

@@ -257,6 +257,7 @@ function HomeCard({ card }: { card: Card }) {
 }
 
 function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (v: boolean | ((p: boolean) => boolean)) => void }) {
+  const [cardsExpanded, setCardsExpanded] = useState(false);
   useReveal();
   useLazyVideoLoader();
   return (
@@ -305,8 +306,9 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__spark" width="130" height="130" viewBox="0 0 100 100" aria-hidden="true">
-            <path d="M50 0 C54.5 31 31 45.5 0 50 C31 54.5 54.5 69 50 100 C45.5 69 69 54.5 100 50 C69 45.5 45.5 31 50 0 Z" fill="var(--orange)" />
+          <svg className="nav-overlay__arrow" width="110" height="110" viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <line x1="22" y1="88" x2="88" y2="22" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round"/>
+            <polyline points="44,22 88,22 88,66" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
           </svg>
           {(
             [
@@ -368,11 +370,34 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
       {/* ===================== WORK ===================== */}
       <section className="work">
         <div className="work-inner">
-          {cards.map((card, i) => (
-            <div key={i} className="reveal" style={{ '--reveal-delay': `${i * 0.1}s` } as React.CSSProperties}>
-              <HomeCard card={card} />
+          {/* First card — always visible */}
+          <div className="reveal" style={{ '--reveal-delay': '0s' } as React.CSSProperties}>
+            <HomeCard card={cards[0]} />
+          </div>
+
+          {/* Expand toggle + remaining 3 cards */}
+          <div className="work-expand-wrap">
+            <button
+              className={`work-expand-btn${cardsExpanded ? " is-open" : ""}`}
+              onClick={() => setCardsExpanded(v => !v)}
+              aria-expanded={cardsExpanded}
+              aria-label={cardsExpanded ? "Show less" : "See more work"}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M4 7L10 13L16 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            <div className={`work-cards-expand${cardsExpanded ? " is-open" : ""}`} aria-hidden={!cardsExpanded}>
+              <div className="work-cards-expand-inner">
+                {cards.slice(1).map((card, i) => (
+                  <div key={i + 1} className="reveal" style={{ '--reveal-delay': `${(i + 1) * 0.1}s` } as React.CSSProperties}>
+                    <HomeCard card={card} />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </div>
 
           <div className="work-cta">
             <div className="ap-cta-actions">

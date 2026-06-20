@@ -169,8 +169,9 @@ export default function WorkPage() {
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__spark" width="130" height="130" viewBox="0 0 100 100" aria-hidden="true">
-            <path d="M50 0 C54.5 31 31 45.5 0 50 C31 54.5 54.5 69 50 100 C45.5 69 69 54.5 100 50 C69 45.5 45.5 31 50 0 Z" fill="var(--orange)" />
+          <svg className="nav-overlay__arrow" width="110" height="110" viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <line x1="22" y1="88" x2="88" y2="22" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round"/>
+            <polyline points="44,22 88,22 88,66" stroke="var(--orange)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
           </svg>
           {([
             { label: "Home",         to: "/" },

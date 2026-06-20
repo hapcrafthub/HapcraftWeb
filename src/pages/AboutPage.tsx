@@ -64,7 +64,10 @@ export default function AboutPage() {
           </button>
         </div>
         <div className="ap-nav-links">
-          <Spark style={{ position: "absolute", right: "6%", top: "12%", width: 120, height: 120, pointerEvents: "none", opacity: 0.9, color: "#FF7A23" }} />
+          <svg style={{ position: "absolute", right: "6%", top: "12%", width: 110, height: 110, pointerEvents: "none", opacity: 0.85 }} viewBox="0 0 110 110" fill="none" aria-hidden="true">
+            <line x1="22" y1="88" x2="88" y2="22" stroke="#FF7A23" strokeWidth="6" strokeLinecap="round"/>
+            <polyline points="44,22 88,22 88,66" stroke="#FF7A23" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          </svg>
           <Link to="/" className="ap-nav-link" onClick={() => setMenuOpen(false)}>
             Home
           </Link>
@@ -85,10 +88,7 @@ export default function AboutPage() {
 
         {/* top meta bar */}
         <div className="ap-meta-bar">
-          <span className="ap-meta-left">
-            <Spark fill="#FF7A23" style={{ width: 12, height: 12, flexShrink: 0 }} />
-            Who We Are
-          </span>
+          <span className="ap-meta-left">Who We Are</span>
           <span className="ap-meta-right">Hapcraft</span>
         </div>
 
