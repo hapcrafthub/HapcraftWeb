@@ -18,6 +18,7 @@ const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
 const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15";
 const BAR_POSTER_TX = "so_0,w_400,f_jpg,q_auto";
 const HAP_POSTER_TX = "so_0,w_800,f_jpg,q_auto";
+const HAP_POSTER_MOBILE_TX = "so_0,w_430,f_jpg,q_auto";
 const CROWD_POSTER_TX = "so_0,w_900,f_jpg,q_auto";
 
 const HAP_ID = "Hap_vp_hxkmwn";
@@ -29,6 +30,7 @@ const BAR4_ID = "Indian_guy_doing_act_202606140159_z0iqja";
 
 const hapVideo = `${CLOUDINARY}/q_auto,f_auto,w_800,fps_24/${HAP_ID}.mp4`;
 const hapPoster = `${CLOUDINARY}/${HAP_POSTER_TX}/${HAP_ID}.jpg`;
+const hapPosterMobile = `${CLOUDINARY}/${HAP_POSTER_MOBILE_TX}/${HAP_ID}.jpg`;
 const crowdVideo = `${CLOUDINARY}/q_auto,f_auto,w_900/${CROWD_ID}.mp4`;
 const crowdPoster = `${CLOUDINARY}/${CROWD_POSTER_TX}/${CROWD_ID}.jpg`;
 const barVideo1 = `${CLOUDINARY}/${BAR_TX}/${BAR1_ID}.mp4`;
@@ -57,15 +59,20 @@ function useLowPowerDevice() {
 type LazyVideoProps = {
   src: string;
   poster: string;
+  mobilePoster?: string;
   className?: string;
   videoRef?: React.Ref<HTMLVideoElement>;
 };
-function LazyVideo({ src, poster, className, videoRef }: LazyVideoProps) {
+function LazyVideo({ src, poster, mobilePoster, className, videoRef }: LazyVideoProps) {
   const lowPower = useLowPowerDevice();
+  const activePoster =
+    mobilePoster && typeof window !== "undefined" && window.innerWidth < 768
+      ? mobilePoster
+      : poster;
   if (lowPower) {
     return (
       <img
-        src={poster}
+        src={activePoster}
         alt=""
         className={className}
         loading="lazy"
@@ -79,7 +86,7 @@ function LazyVideo({ src, poster, className, videoRef }: LazyVideoProps) {
       ref={videoRef}
       className={className}
       data-src={src}
-      poster={poster}
+      poster={activePoster}
       muted
       loop
       playsInline
@@ -93,22 +100,54 @@ function useLazyVideoLoader() {
   useEffect(() => {
     const videos = document.querySelectorAll<HTMLVideoElement>("video[data-lazy]");
     if (!videos.length) return;
+
+    const isMobileMQ = window.matchMedia("(max-width: 768px)");
+    let currentMobileVideo: HTMLVideoElement | null = null;
+    const pauseTimers = new Map<HTMLVideoElement, number>();
+    const PAUSE_DELAY = 180;
+
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           const v = e.target as HTMLVideoElement;
+
+          const t = pauseTimers.get(v);
+          if (t !== undefined) {
+            clearTimeout(t);
+            pauseTimers.delete(v);
+          }
+
           if (e.isIntersecting) {
             if (!v.src && v.dataset.src) v.src = v.dataset.src;
-            if (!v.dataset.hoverOnly) v.play().catch(() => {});
-          } else if (e.intersectionRatio === 0) {
-            v.pause();
+
+            if (v.paused) {
+              if (isMobileMQ.matches && currentMobileVideo && currentMobileVideo !== v) {
+                currentMobileVideo.pause();
+              }
+              // set synchronously so concurrent-batch entries see the updated ref
+              if (isMobileMQ.matches) currentMobileVideo = v;
+              v.play().catch(() => {
+                if (currentMobileVideo === v) currentMobileVideo = null;
+              });
+            }
+          } else {
+            const id = window.setTimeout(() => {
+              if (!v.paused) v.pause();
+              if (currentMobileVideo === v) currentMobileVideo = null;
+              pauseTimers.delete(v);
+            }, PAUSE_DELAY);
+            pauseTimers.set(v, id);
           }
         });
       },
-      { threshold: [0, 0.01], rootMargin: "200px" }
+      { threshold: 0, rootMargin: "200px 0px" }
     );
+
     videos.forEach((v) => obs.observe(v));
-    return () => obs.disconnect();
+    return () => {
+      obs.disconnect();
+      pauseTimers.forEach((id) => clearTimeout(id));
+    };
   }, []);
 }
 
@@ -249,7 +288,7 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           }}
           aria-label="Hapcraft"
         >
-          <LazyVideo className="hero-video" src={hapVideo} poster={hapPoster} />
+          <LazyVideo className="hero-video" src={hapVideo} poster={hapPoster} mobilePoster={hapPosterMobile} />
         </div>
       </header>
 
