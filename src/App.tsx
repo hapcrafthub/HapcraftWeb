@@ -120,16 +120,13 @@ function useLazyVideoLoader() {
           if (e.isIntersecting) {
             if (!v.src && v.dataset.src) v.src = v.dataset.src;
 
-            if (v.paused) {
-              if (isMobileMQ.matches && currentMobileVideo && currentMobileVideo !== v) {
-                currentMobileVideo.pause();
-              }
-              // set synchronously so concurrent-batch entries see the updated ref
-              if (isMobileMQ.matches) currentMobileVideo = v;
-              v.play().catch(() => {
-                if (currentMobileVideo === v) currentMobileVideo = null;
-              });
+            if (isMobileMQ.matches && currentMobileVideo && currentMobileVideo !== v) {
+              currentMobileVideo.pause();
             }
+            if (isMobileMQ.matches) currentMobileVideo = v;
+            v.play().catch(() => {
+              if (currentMobileVideo === v) currentMobileVideo = null;
+            });
           } else {
             const id = window.setTimeout(() => {
               if (!v.paused) v.pause();
