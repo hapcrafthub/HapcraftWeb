@@ -72,6 +72,7 @@ const groups: WorkGroup[] = [
       title: "Rebranded one of the coziest cafes of Andhra Pradesh.",
       description: "We redesigned the entire logo and color identity for Cafe Riverio to enhance its cozy aesthetic. This rebranding created a highly scalable model tailored specifically to their target consumers.",
       image: cafeRiverio,
+      contain: true,
     },
     small1: {
       title: "Redesigned the finest boutique brand in Telangana.",
@@ -174,7 +175,7 @@ export default function WorkPage() {
         </div>
         <div className="nav-overlay__links">
           <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
-            <path d="M10 6 L10 90 L68 48 Z" fill="var(--orange)" opacity="0.82" />
+            <path d="M10 6 L10 90 L68 48 Z" fill="var(--cream)" opacity="0.9" />
           </svg>
           {([
             { label: "Home",         to: "/" },

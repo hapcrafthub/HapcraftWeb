@@ -64,8 +64,8 @@ export default function AboutPage() {
           </button>
         </div>
         <div className="ap-nav-links">
-          <svg style={{ position: "absolute", right: "6%", top: "12%", width: 72, height: 96, pointerEvents: "none", opacity: 0.82 }} viewBox="0 0 72 96" fill="none" aria-hidden="true">
-            <path d="M10 6 L10 90 L68 48 Z" fill="#FF7A23" />
+          <svg style={{ position: "absolute", right: "6%", top: "12%", width: 72, height: 96, pointerEvents: "none", opacity: 0.9 }} viewBox="0 0 72 96" fill="none" aria-hidden="true">
+            <path d="M10 6 L10 90 L68 48 Z" fill="var(--cream)" />
           </svg>
           <Link to="/" className="ap-nav-link" onClick={() => setMenuOpen(false)}>
             Home

@@ -331,9 +331,8 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           </button>
         </div>
         <div className="nav-overlay__links">
-          {/* Arrow derived from the right-pointing triangle cutout inside the "P" of the HAP logo */}
           <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
-            <path d="M10 6 L10 90 L68 48 Z" fill="var(--orange)" opacity="0.82" />
+            <path d="M10 6 L10 90 L68 48 Z" fill="var(--cream)" opacity="0.9" />
           </svg>
           {(
             [
