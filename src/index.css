@@ -94,8 +94,8 @@
   position: absolute;
   inset: 0;
   clip-path: inset(0 100% 0 0);
-  animation: il-wipe 1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-  animation-delay: 0.25s;
+  animation: il-wipe 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation-delay: 0.15s;
   filter: brightness(0) invert(49%) sepia(96%) saturate(1021%) hue-rotate(349deg) brightness(101%) contrast(101%);
 }
 

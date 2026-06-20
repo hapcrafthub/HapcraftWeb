@@ -5,8 +5,8 @@ export default function IntroLoader({ onDone }: { onDone: () => void }) {
   const [hiding, setHiding] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setHiding(true), 2200);
-    const doneTimer = setTimeout(onDone, 2750);
+    const fadeTimer = setTimeout(() => setHiding(true), 1000);
+    const doneTimer = setTimeout(onDone, 1400);
     return () => { clearTimeout(fadeTimer); clearTimeout(doneTimer); };
   }, [onDone]);
 

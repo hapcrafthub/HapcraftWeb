@@ -40,7 +40,62 @@ const barPoster2 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR2_ID}.jpg`;
 const barPoster3 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR3_ID}.jpg`;
 const barPoster4 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR4_ID}.jpg`;
 
-function usePauseOffscreenVideos() {
+function useLowPowerDevice() {
+  const get = () =>
+    typeof window !== "undefined" &&
+    (window.matchMedia("(max-width: 768px)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [low, setLow] = useState<boolean>(get);
+  useEffect(() => {
+    const mqSize = window.matchMedia("(max-width: 768px)");
+    const mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setLow(mqSize.matches || mqMotion.matches);
+    mqSize.addEventListener("change", update);
+    mqMotion.addEventListener("change", update);
+    return () => {
+      mqSize.removeEventListener("change", update);
+      mqMotion.removeEventListener("change", update);
+    };
+  }, []);
+  return low;
+}
+
+type LazyVideoProps = {
+  src: string;
+  poster: string;
+  className?: string;
+  videoRef?: React.Ref<HTMLVideoElement>;
+};
+function LazyVideo({ src, poster, className, videoRef }: LazyVideoProps) {
+  const lowPower = useLowPowerDevice();
+  if (lowPower) {
+    return (
+      <img
+        src={poster}
+        alt=""
+        className={className}
+        loading="lazy"
+        decoding="async"
+        aria-hidden="true"
+      />
+    );
+  }
+  return (
+    <video
+      ref={videoRef}
+      className={className}
+      data-src={src}
+      poster={poster}
+      muted
+      loop
+      playsInline
+      preload="none"
+      data-lazy
+    />
+  );
+}
+
+function useLazyVideoLoader() {
   useEffect(() => {
     const videos = document.querySelectorAll<HTMLVideoElement>("video[data-lazy]");
     if (!videos.length) return;
@@ -49,7 +104,8 @@ function usePauseOffscreenVideos() {
         entries.forEach((e) => {
           const v = e.target as HTMLVideoElement;
           if (e.isIntersecting) {
-            v.play().catch(() => {});
+            if (!v.src && v.dataset.src) v.src = v.dataset.src;
+            if (!v.dataset.hoverOnly) v.play().catch(() => {});
           } else if (e.intersectionRatio === 0) {
             v.pause();
           }
@@ -124,14 +180,19 @@ export default function App() {
 function HomeCard({ card }: { card: Card }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+  const lowPower = useLowPowerDevice();
 
   const handleMouseEnter = () => {
-    if (!card.hoverVideo) return;
+    if (!card.hoverVideo || lowPower) return;
     setHovered(true);
-    videoRef.current?.play();
+    const v = videoRef.current;
+    if (v) {
+      if (!v.src && v.dataset.src) v.src = v.dataset.src;
+      v.play().catch(() => {});
+    }
   };
   const handleMouseLeave = () => {
-    if (!card.hoverVideo) return;
+    if (!card.hoverVideo || lowPower) return;
     setHovered(false);
     if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
   };
@@ -144,11 +205,11 @@ function HomeCard({ card }: { card: Card }) {
     >
       <div className="card-media">
         <img src={card.image ?? eventPhoto} alt="Event" />
-        {card.hoverVideo && (
+        {card.hoverVideo && !lowPower && (
           <video
             ref={videoRef}
             className={`card-hover-video${hovered ? " is-visible" : ""}`}
-            src={card.hoverVideo}
+            data-src={card.hoverVideo}
             poster={crowdPoster}
             muted
             playsInline
@@ -167,7 +228,7 @@ function HomeCard({ card }: { card: Card }) {
 
 function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (v: boolean | ((p: boolean) => boolean)) => void }) {
   useReveal();
-  usePauseOffscreenVideos();
+  useLazyVideoLoader();
   return (
     <div className="page">
       {/* ===================== HERO ===================== */}
@@ -194,17 +255,7 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           }}
           aria-label="Hapcraft"
         >
-          <video
-            className="hero-video"
-            src={hapVideo}
-            poster={hapPoster}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="none"
-            data-lazy
-          />
+          <LazyVideo className="hero-video" src={hapVideo} poster={hapPoster} />
         </div>
       </header>
 
@@ -248,16 +299,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           <div className="intro-left">
             <div className="headline-art">
               <span className="bar bar-1">
-                <video src={barVideo1} poster={barPoster1} autoPlay loop muted playsInline preload="none" data-lazy />
+                <LazyVideo src={barVideo1} poster={barPoster1} />
               </span>
               <span className="bar bar-2">
-                <video src={barVideo2} poster={barPoster2} autoPlay loop muted playsInline preload="none" data-lazy />
+                <LazyVideo src={barVideo2} poster={barPoster2} />
               </span>
               <span className="bar bar-3">
-                <video src={barVideo3} poster={barPoster3} autoPlay loop muted playsInline preload="none" data-lazy />
+                <LazyVideo src={barVideo3} poster={barPoster3} />
               </span>
               <span className="bar bar-4">
-                <video src={barVideo4} poster={barPoster4} autoPlay loop muted playsInline preload="none" data-lazy />
+                <LazyVideo src={barVideo4} poster={barPoster4} />
               </span>
               <h1 className="headline">
                 <span>We are</span>
