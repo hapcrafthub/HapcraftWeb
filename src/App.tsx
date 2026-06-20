@@ -43,19 +43,13 @@ const barPoster4 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR4_ID}.jpg`;
 function useLowPowerDevice() {
   const get = () =>
     typeof window !== "undefined" &&
-    (window.matchMedia("(max-width: 768px)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [low, setLow] = useState<boolean>(get);
   useEffect(() => {
-    const mqSize = window.matchMedia("(max-width: 768px)");
-    const mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setLow(mqSize.matches || mqMotion.matches);
-    mqSize.addEventListener("change", update);
-    mqMotion.addEventListener("change", update);
-    return () => {
-      mqSize.removeEventListener("change", update);
-      mqMotion.removeEventListener("change", update);
-    };
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setLow(mq.matches);
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
   return low;
 }
