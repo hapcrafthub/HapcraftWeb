@@ -54,16 +54,36 @@
   pointer-events: none;
 }
 
-.il-wordmark {
-  width: clamp(110px, 14vw, 180px);
-  height: auto;
-  opacity: 0;
-  animation: il-wordmark-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: 0.1s;
+.il-logo-wrap {
+  position: relative;
+  width: clamp(300px, 52vw, 700px);
+  aspect-ratio: 3.13 / 1;
+  overflow: hidden;
 }
-@keyframes il-wordmark-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
+
+.il-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.il-logo-ghost {
+  opacity: 0.09;
+  filter: brightness(0) invert(1);
+}
+
+.il-logo-fill {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 100% 0 0);
+  animation: il-wipe 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation-delay: 0.15s;
+  filter: brightness(0) invert(49%) sepia(96%) saturate(1021%) hue-rotate(349deg) brightness(101%) contrast(101%);
+}
+
+@keyframes il-wipe {
+  0%   { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0%   0 0); }
 }
 
 html {

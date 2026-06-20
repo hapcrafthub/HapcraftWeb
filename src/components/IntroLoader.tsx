@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Logo from "./Logo";
+import logoSrc from "../assets/logo.png";
 
 export default function IntroLoader({ onDone }: { onDone: () => void }) {
   const [hiding, setHiding] = useState(false);
@@ -12,7 +12,10 @@ export default function IntroLoader({ onDone }: { onDone: () => void }) {
 
   return (
     <div className={`il${hiding ? " il--hide" : ""}`}>
-      <Logo className="il-wordmark" />
+      <div className="il-logo-wrap">
+        <img className="il-logo il-logo-ghost" src={logoSrc} alt="Hapcraft" />
+        <img className="il-logo il-logo-fill" src={logoSrc} alt="" aria-hidden="true" />
+      </div>
     </div>
   );
 }
