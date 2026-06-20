@@ -1501,16 +1501,23 @@ img {
 /* ----------------------------------------------------------------
    RESPONSIVE
    ---------------------------------------------------------------- */
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .ap-founder-center { display: none; }
   .ap-hero-bottom { flex-direction: column; align-items: flex-start; }
-  .ap-headline-wrap { overflow: hidden; }
-  .ap-we-make-col { font-size: clamp(2.2rem, 11vw, 4.6rem); }
-  .ap-brands { font-size: clamp(3.6rem, 20vw, 7.2rem); }
-  .ap-unforgettable {
-    font-size: clamp(1.8rem, 10.5vw, 4.4rem);
+  .ap-headline-wrap { overflow: hidden; max-width: 100%; }
+  .ap-we-make-row { flex-wrap: wrap; }
+  .ap-we-make-col { font-size: clamp(2rem, 9.5vw, 4rem); }
+  .ap-brands {
+    font-size: clamp(3rem, 15vw, 6rem);
     word-break: break-word;
     overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+  .ap-unforgettable {
+    font-size: clamp(1.8rem, 9vw, 4rem);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
   }
 }
 
@@ -1821,7 +1828,10 @@ img {
     padding: 0 16px;
   }
   .nav {
-    padding: 24px 24px 0;
+    top: 20px;
+    left: 16px;
+    right: 16px;
+    padding: 0;
   }
   .nav-logo {
     width: 124px;
