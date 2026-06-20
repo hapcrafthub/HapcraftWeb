@@ -1866,14 +1866,18 @@ img {
   }
 
   .contact-btn {
-    width: 200px;
-    height: 58px;
-    font-size: 22px;
+    width: auto;
+    max-width: 100%;
+    height: 56px;
+    padding: 0 26px;
+    font-size: 17px;
   }
   .view-more {
-    width: 240px;
-    height: 66px;
-    font-size: 24px;
+    width: auto;
+    max-width: 100%;
+    height: 60px;
+    padding: 0 28px;
+    font-size: 18px;
   }
   .work-cta {
     padding-top: 40px;
