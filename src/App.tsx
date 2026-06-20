@@ -15,7 +15,7 @@ import SiteFooter from "./components/SiteFooter";
 import IntroLoader from "./components/IntroLoader";
 
 const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
-const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15,br_300k,vc_h264";
+const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15";
 const BAR_POSTER_TX = "so_0,w_400,f_jpg,q_auto";
 const HAP_POSTER_TX = "so_0,w_800,f_jpg,q_auto";
 const CROWD_POSTER_TX = "so_0,w_900,f_jpg,q_auto";
@@ -40,7 +40,7 @@ const barPoster2 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR2_ID}.jpg`;
 const barPoster3 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR3_ID}.jpg`;
 const barPoster4 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR4_ID}.jpg`;
 
-function useLazyVideos() {
+function usePauseOffscreenVideos() {
   useEffect(() => {
     const videos = document.querySelectorAll<HTMLVideoElement>("video[data-lazy]");
     if (!videos.length) return;
@@ -50,16 +50,16 @@ function useLazyVideos() {
           const v = e.target as HTMLVideoElement;
           if (e.isIntersecting) {
             v.play().catch(() => {});
-          } else {
+          } else if (e.intersectionRatio === 0) {
             v.pause();
           }
         });
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      { threshold: [0, 0.01], rootMargin: "200px" }
     );
     videos.forEach((v) => obs.observe(v));
     return () => obs.disconnect();
-  });
+  }, []);
 }
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
@@ -167,7 +167,7 @@ function HomeCard({ card }: { card: Card }) {
 
 function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (v: boolean | ((p: boolean) => boolean)) => void }) {
   useReveal();
-  useLazyVideos();
+  usePauseOffscreenVideos();
   return (
     <div className="page">
       {/* ===================== HERO ===================== */}
@@ -198,6 +198,7 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
             className="hero-video"
             src={hapVideo}
             poster={hapPoster}
+            autoPlay
             loop
             muted
             playsInline
@@ -247,16 +248,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           <div className="intro-left">
             <div className="headline-art">
               <span className="bar bar-1">
-                <video src={barVideo1} poster={barPoster1} loop muted playsInline preload="none" data-lazy />
+                <video src={barVideo1} poster={barPoster1} autoPlay loop muted playsInline preload="none" data-lazy />
               </span>
               <span className="bar bar-2">
-                <video src={barVideo2} poster={barPoster2} loop muted playsInline preload="none" data-lazy />
+                <video src={barVideo2} poster={barPoster2} autoPlay loop muted playsInline preload="none" data-lazy />
               </span>
               <span className="bar bar-3">
-                <video src={barVideo3} poster={barPoster3} loop muted playsInline preload="none" data-lazy />
+                <video src={barVideo3} poster={barPoster3} autoPlay loop muted playsInline preload="none" data-lazy />
               </span>
               <span className="bar bar-4">
-                <video src={barVideo4} poster={barPoster4} loop muted playsInline preload="none" data-lazy />
+                <video src={barVideo4} poster={barPoster4} autoPlay loop muted playsInline preload="none" data-lazy />
               </span>
               <h1 className="headline">
                 <span>We are</span>
