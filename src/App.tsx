@@ -7,6 +7,10 @@ import crowdAerial from "./assets/Screenshot 2026-06-14 021330.png";
 import govtMeeting from "./assets/govt-meeting.jpg";
 import mrPotato from "./assets/mr-potato.png";
 import jobipo from "./assets/jobipo.png";
+import barImg1 from "./assets/bar-img-1.jpg";
+import barImg2 from "./assets/bar-img-2.jpg";
+import barImg3 from "./assets/bar-img-3.jpg";
+import barImg4 from "./assets/bar-img-4.jpg";
 import Logo from "./components/Logo";
 import WorkPage from "./pages/WorkPage";
 import AboutPage from "./pages/AboutPage";
@@ -16,31 +20,23 @@ import IntroLoader from "./components/IntroLoader";
 
 const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
 const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15";
-const BAR_POSTER_TX = "so_0,w_400,f_jpg,q_auto";
-const HAP_POSTER_TX = "so_0,w_800,f_jpg,q_auto";
-const HAP_POSTER_MOBILE_TX = "so_0,w_430,f_jpg,q_auto";
 const CROWD_POSTER_TX = "so_0,w_900,f_jpg,q_auto";
 
-const HAP_ID = "Hap_vp_hxkmwn";
 const CROWD_ID = "Crowd_enjoying_at_function_202606132324_dt4bwe";
 const BAR1_ID = "Indian_couple_posing_professionally_202606140158_tn9k9u";
 const BAR2_ID = "km_20260614-1_1080p_30f_20260614_015641_gquod9";
 const BAR3_ID = "km_20260614_1080p_30f_20260614_015516_zqyyp3";
 const BAR4_ID = "Indian_guy_doing_act_202606140159_z0iqja";
 
-const hapVideo = `${CLOUDINARY}/q_auto,f_auto,w_800,fps_24/${HAP_ID}.mp4`;
-const hapPoster = `${CLOUDINARY}/${HAP_POSTER_TX}/${HAP_ID}.jpg`;
-const hapPosterMobile = `${CLOUDINARY}/${HAP_POSTER_MOBILE_TX}/${HAP_ID}.jpg`;
+const hapVideo = "/hero.mp4";
+const hapPoster = "";
+const hapPosterMobile = "";
 const crowdVideo = `${CLOUDINARY}/q_auto,f_auto,w_900/${CROWD_ID}.mp4`;
 const crowdPoster = `${CLOUDINARY}/${CROWD_POSTER_TX}/${CROWD_ID}.jpg`;
 const barVideo1 = `${CLOUDINARY}/${BAR_TX}/${BAR1_ID}.mp4`;
 const barVideo2 = `${CLOUDINARY}/${BAR_TX}/${BAR2_ID}.mp4`;
 const barVideo3 = `${CLOUDINARY}/${BAR_TX}/${BAR3_ID}.mp4`;
 const barVideo4 = `${CLOUDINARY}/${BAR_TX}/${BAR4_ID}.mp4`;
-const barPoster1 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR1_ID}.jpg`;
-const barPoster2 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR2_ID}.jpg`;
-const barPoster3 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR3_ID}.jpg`;
-const barPoster4 = `${CLOUDINARY}/${BAR_POSTER_TX}/${BAR4_ID}.jpg`;
 
 function useLowPowerDevice() {
   const get = () =>
@@ -146,6 +142,39 @@ function useLazyVideoLoader() {
       pauseTimers.forEach((id) => clearTimeout(id));
     };
   }, []);
+}
+
+function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const lowPower = useLowPowerDevice();
+
+  return (
+    <div
+      style={{ position: "absolute", inset: 0 }}
+      onMouseEnter={() => {
+        if (lowPower) return;
+        setHovered(true);
+        const v = videoRef.current;
+        if (v) { if (!v.src) { v.src = videoSrc; v.load(); } v.play().catch(() => {}); }
+      }}
+      onMouseLeave={() => {
+        if (lowPower) return;
+        setHovered(false);
+        const v = videoRef.current;
+        if (v) { v.pause(); v.currentTime = 0; }
+      }}
+    >
+      <img className="bar-img" src={image} alt="" />
+      {!lowPower && (
+        <video
+          ref={videoRef}
+          className={`bar-video-hover${hovered ? " visible" : ""}`}
+          muted loop playsInline preload="none"
+        />
+      )}
+    </div>
+  );
 }
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
@@ -380,16 +409,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           <div className="intro-left">
             <div className="headline-art">
               <span className="bar bar-1">
-                <LazyVideo src={barVideo1} poster={barPoster1} />
+                <BarSlot image={barImg1} videoSrc={barVideo1} />
               </span>
               <span className="bar bar-2">
-                <LazyVideo src={barVideo2} poster={barPoster2} />
+                <BarSlot image={barImg2} videoSrc={barVideo2} />
               </span>
               <span className="bar bar-3">
-                <LazyVideo src={barVideo3} poster={barPoster3} />
+                <BarSlot image={barImg3} videoSrc={barVideo3} />
               </span>
               <span className="bar bar-4">
-                <LazyVideo src={barVideo4} poster={barPoster4} />
+                <BarSlot image={barImg4} videoSrc={barVideo4} />
               </span>
               <h1 className="headline">
                 <span>We are</span>

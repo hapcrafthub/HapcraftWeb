@@ -277,6 +277,21 @@ img {
   border-radius: 7px;
   overflow: hidden;
 }
+.bar-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.bar-video-hover {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.bar-video-hover.visible {
+  opacity: 1;
+}
 .bar video {
   position: absolute;
   inset: 0;

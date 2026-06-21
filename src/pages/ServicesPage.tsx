@@ -10,11 +10,6 @@ import imgContent      from "../assets/make_him_look_little_fair_202606180425.jp
 import imgProduct      from "../assets/make_bacground_orange_2K_202606180403.jpeg";
 import imgPerformance  from "../assets/just_write_big_bold_word_202606180403 - Copy.jpeg";
 
-const Spark = ({ style, fill = "currentColor" }: { style?: React.CSSProperties; fill?: string }) => (
-  <svg viewBox="0 0 100 100" style={style} aria-hidden="true">
-    <path d="M50 0 C54.5 31 31 45.5 0 50 C31 54.5 54.5 69 50 100 C45.5 69 69 54.5 100 50 C69 45.5 45.5 31 50 0 Z" fill={fill} />
-  </svg>
-);
 
 interface ServiceCard {
   num: string;
