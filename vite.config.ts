@@ -45,6 +45,9 @@ export default defineConfig({
       manifest: {
         name: "Hapcraft Media",
         short_name: "Hapcraft",
+        start_url: "/",
+        scope: "/",
+        id: "/",
         theme_color: "#0a0a0a",
         background_color: "#0a0a0a",
         display: "standalone",
