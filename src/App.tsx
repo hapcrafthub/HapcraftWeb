@@ -6,7 +6,7 @@ import eventPhoto from "./assets/event.png";
 import crowdAerial from "./assets/Screenshot 2026-06-14 021330.png";
 import govtMeeting from "./assets/govt-meeting.jpg";
 import mrPotato from "./assets/mr-potato-photo.jpg";
-import jobipo from "./assets/jobipo.png";
+import jobipoNew from "./assets/jobipo-new.png";
 import barImg1 from "./assets/bar-img-1.jpg";
 import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
@@ -173,7 +173,7 @@ const BAR_SLOTS: { cls: string; image: string }[] = [
   { cls: "bar-4", image: barImg2 },      // girl with phones
 ];
 
-type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
+type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string; imageContain?: boolean };
 
 const cards: Card[] = [
   {
@@ -197,7 +197,8 @@ const cards: Card[] = [
   },
   {
     imageSide: "right",
-    image: jobipo,
+    image: jobipoNew,
+    imageContain: true,
     title: "Repostioned india's smartest Affiliate Platform: JOBIPO",
     summary: "We served as the brand strategist for Jobipo, designing a content strategy to attract their target audience. This targeted approach successfully generated all organic outreach for the platform.",
   },
@@ -298,7 +299,11 @@ function HomeCard({ card }: { card: Card }) {
       onPointerDown={handleTouch}
     >
       <div className="card-media">
-        <img src={card.image ?? eventPhoto} alt="Event" />
+        <img
+          src={card.image ?? eventPhoto}
+          alt="Event"
+          style={card.imageContain ? { objectFit: "contain", background: "#f5f0e8" } : undefined}
+        />
         {card.hoverVideo && !lowPower && (
           <video
             ref={videoRef}
@@ -315,6 +320,7 @@ function HomeCard({ card }: { card: Card }) {
       <div className="card-body">
         <h3>{card.title}</h3>
       </div>
+      {showSummary && <p className="card-summary">{card.summary}</p>}
       <button
         className={`card-tab${showSummary ? " is-open" : ""}`}
         onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
@@ -322,7 +328,6 @@ function HomeCard({ card }: { card: Card }) {
       >
         <span className="card-tab-label">{showSummary ? "Read less" : "Read more"}</span>
       </button>
-      {showSummary && <p className="card-summary">{card.summary}</p>}
     </article>
   );
 }
