@@ -156,7 +156,7 @@ function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
         if (lowPower) return;
         setHovered(true);
         const v = videoRef.current;
-        if (v) { if (!v.src) { v.src = videoSrc; v.load(); } v.play().catch(() => {}); }
+        if (v) { if (!v.src) v.src = videoSrc; v.play().catch(() => {}); }
       }}
       onMouseLeave={() => {
         if (lowPower) return;
@@ -265,12 +265,7 @@ function HomeCard({ card }: { card: Card }) {
     setHovered(false);
     stopVideo();
   };
-  const handleTouch = (e: React.PointerEvent) => {
-    if (e.pointerType !== "touch" || !card.hoverVideo || lowPower) return;
-    e.preventDefault();
-    if (hovered) { setHovered(false); stopVideo(); }
-    else { setHovered(true); playVideo(); }
-  };
+  const handleTouch = (_e: React.PointerEvent) => { /* observer handles mobile */ };
 
   // Mobile: auto-play card video when scrolled into view instead of waiting for tap
   useEffect(() => {
@@ -283,14 +278,14 @@ function HomeCard({ card }: { card: Card }) {
       if (!v) return;
       if (entry.isIntersecting) {
         setHovered(true);
-        if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+        if (!v.src && v.dataset.src) v.src = v.dataset.src;
         v.play().catch(() => {});
       } else {
         setHovered(false);
         v.pause();
         v.currentTime = 0;
       }
-    }, { threshold: 0.4 });
+    }, { threshold: 0.2 });
     obs.observe(el);
     return () => obs.disconnect();
   }, [card.hoverVideo, lowPower]);

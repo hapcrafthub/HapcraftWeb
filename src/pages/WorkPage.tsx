@@ -119,14 +119,14 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
       if (!v) return;
       if (entry.isIntersecting) {
         setHovered(true);
-        if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+        if (!v.src) v.src = card.hoverVideo!;
         v.play().catch(() => {});
       } else {
         setHovered(false);
         v.pause();
         v.currentTime = 0;
       }
-    }, { threshold: 0.4 });
+    }, { threshold: 0.2 });
     obs.observe(el);
     return () => obs.disconnect();
   }, [card.hoverVideo]);

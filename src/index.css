@@ -918,10 +918,27 @@ img {
   .wp-group .wp-card--s1,
   .wp-group .wp-card--s2 {
     grid-area: unset;
-    min-height: 280px;
+  }
+  .wp-group .wp-card--s1,
+  .wp-group .wp-card--s2 {
+    min-height: 220px;
   }
   .wp-card--large {
-    min-height: 420px;
+    min-height: unset;
+    flex-direction: column;
+  }
+  .wp-card--large .wp-card__media {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+  }
+  .wp-card--large .wp-card__media img {
+    height: 100%;
+    object-fit: cover;
+  }
+  .wp-card--large.wp-card--contain .wp-card__media img {
+    object-fit: contain;
   }
 }
 @media (max-width: 560px) {
