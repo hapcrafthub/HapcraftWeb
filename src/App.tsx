@@ -140,9 +140,28 @@ function useLazyVideoLoader() {
 }
 
 function BarSlot({ image }: { image: string }) {
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img || window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        img.classList.add("bar-entered");
+        observer.disconnect();
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(img);
+    const onEnd = () => img.classList.remove("bar-entered");
+    img.addEventListener("animationend", onEnd, { once: true });
+    return () => { observer.disconnect(); img.removeEventListener("animationend", onEnd); };
+  }, []);
+
   return (
     <div style={{ position: "absolute", inset: 0 }}>
-      <img className="bar-img" src={image} alt="" fetchPriority="low" />
+      <img ref={imgRef} className="bar-img" src={image} alt="" fetchPriority="low" />
     </div>
   );
 }
@@ -301,9 +320,7 @@ function HomeCard({ card }: { card: Card }) {
         onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
         aria-label={showSummary ? "Hide details" : "Show details"}
       >
-        <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden="true">
-          <path d="M1 1L9 9L17 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <span className="card-tab-label">{showSummary ? "Read less" : "Read more"}</span>
       </button>
       {showSummary && <p className="card-summary">{card.summary}</p>}
     </article>

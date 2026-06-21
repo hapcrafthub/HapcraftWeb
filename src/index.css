@@ -274,6 +274,36 @@ img {
   height: 100%;
   object-fit: cover;
   display: block;
+  transform: translateZ(0);
+  will-change: transform;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.55s ease;
+}
+
+/* Desktop — genuine hover only */
+@media (hover: hover) and (pointer: fine) {
+  .bar-img:hover {
+    transform: scale(1.04);
+    filter: brightness(1.06);
+  }
+}
+
+/* Mobile / tablet — press feedback */
+@media (hover: none) {
+  .bar-img:active {
+    transform: scale(1.04);
+    filter: brightness(1.06);
+    transition-duration: 0.12s;
+  }
+}
+
+/* One-shot viewport-entry reveal (mobile/tablet only, added via IntersectionObserver) */
+@keyframes bar-reveal-zoom {
+  from { transform: scale(0.96); filter: brightness(0.97); }
+  to   { transform: scale(1);    filter: brightness(1); }
+}
+.bar-img.bar-entered {
+  animation: bar-reveal-zoom 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .bar-video-hover {
   opacity: 0;
@@ -473,28 +503,33 @@ img {
   margin-bottom: 10px;
 }
 
-/* Full-width bottom tab with centred chevron */
+/* Full-width bottom tab with Read more / Read less */
 .card-tab {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 14px 0;
+  padding: 13px 0;
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   background: transparent;
-  color: var(--orange);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 .card-tab:hover {
-  background: rgba(255, 122, 35, 0.07);
+  background: rgba(0, 0, 0, 0.03);
 }
-.card-tab svg {
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+.card-tab-label {
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.32);
+  transition: color 0.2s ease;
 }
-.card-tab.is-open svg {
-  transform: rotate(180deg);
+.card-tab:hover .card-tab-label {
+  color: rgba(0, 0, 0, 0.52);
 }
 .card-summary {
   padding: 20px 28px 28px;
