@@ -150,8 +150,8 @@ function BarSlot({ image }: { image: string }) {
 const BAR_SLOTS: { cls: string; image: string }[] = [
   { cls: "bar-1", image: barImg1 },
   { cls: "bar-2", image: barImg3 },      // swapped: was barImgCamera
-  { cls: "bar-3", image: barImg2 },      // girl with phones
-  { cls: "bar-4", image: barImgCamera }, // swapped: was barImg3
+  { cls: "bar-3", image: barImgCamera },
+  { cls: "bar-4", image: barImg2 },      // girl with phones
 ];
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
