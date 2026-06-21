@@ -5,12 +5,12 @@ import hapMask from "./assets/hap-mask.png";
 import eventPhoto from "./assets/event.png";
 import crowdAerial from "./assets/Screenshot 2026-06-14 021330.png";
 import govtMeeting from "./assets/govt-meeting.jpg";
-import mrPotato from "./assets/mr-potato.png";
+import mrPotato from "./assets/mr-potato-photo.jpg";
 import jobipo from "./assets/jobipo.png";
 import barImg1 from "./assets/bar-img-1.jpg";
 import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
-import barImg4 from "./assets/bar-img-4.jpg";
+import barImgCamera from "./assets/bar-img-camera.jpg";
 import Logo from "./components/Logo";
 import WorkPage from "./pages/WorkPage";
 import AboutPage from "./pages/AboutPage";
@@ -19,19 +19,23 @@ import SiteFooter from "./components/SiteFooter";
 import IntroLoader from "./components/IntroLoader";
 
 const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
+// Optimized delivery: automatic format + quality, width-capped, progressive/streaming.
 const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15";
+const HERO_TX = "q_auto,f_auto,w_1280";
+const CROWD_TX = "q_auto,f_auto,w_900";
 const CROWD_POSTER_TX = "so_0,w_900,f_jpg,q_auto";
 
-const CROWD_ID = "Crowd_enjoying_at_function_202606132324_dt4bwe";
+const HERO_ID = "sux_1_nkr4ij";
+const CROWD_ID = "iams_vid_flkxaa"; // Arya Mahasammelan crowd hover video
 const BAR1_ID = "Indian_couple_posing_professionally_202606140158_tn9k9u";
 const BAR2_ID = "km_20260614-1_1080p_30f_20260614_015641_gquod9";
 const BAR3_ID = "km_20260614_1080p_30f_20260614_015516_zqyyp3";
 const BAR4_ID = "Indian_guy_doing_act_202606140159_z0iqja";
 
-const hapVideo = "/hero.mp4";
-const hapPoster = "";
-const hapPosterMobile = "";
-const crowdVideo = `${CLOUDINARY}/q_auto,f_auto,w_900/${CROWD_ID}.mp4`;
+const hapVideo = `${CLOUDINARY}/${HERO_TX}/${HERO_ID}.mp4`;
+const hapPoster = `${CLOUDINARY}/so_0,w_1280,f_jpg,q_auto/${HERO_ID}.jpg`;
+const hapPosterMobile = `${CLOUDINARY}/so_0,w_720,f_jpg,q_auto/${HERO_ID}.jpg`;
+const crowdVideo = `${CLOUDINARY}/${CROWD_TX}/${CROWD_ID}.mp4`;
 const crowdPoster = `${CLOUDINARY}/${CROWD_POSTER_TX}/${CROWD_ID}.jpg`;
 const barVideo1 = `${CLOUDINARY}/${BAR_TX}/${BAR1_ID}.mp4`;
 const barVideo2 = `${CLOUDINARY}/${BAR_TX}/${BAR2_ID}.mp4`;
@@ -176,6 +180,15 @@ function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
     </div>
   );
 }
+
+// Bar media mapping (image + paired hover video). Reordered per request:
+//   bar-1 unchanged · bar-2 ← old 3rd · bar-3 ← old 4th video + new camera image · bar-4 ← old 2nd
+const BAR_SLOTS: { cls: string; image: string; video: string }[] = [
+  { cls: "bar-1", image: barImg1,      video: barVideo1 },
+  { cls: "bar-2", image: barImg3,      video: barVideo3 },
+  { cls: "bar-3", image: barImgCamera, video: barVideo4 },
+  { cls: "bar-4", image: barImg2,      video: barVideo2 },
+];
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
 
@@ -403,18 +416,11 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
         <div className="intro-inner">
           <div className="intro-left">
             <div className="headline-art">
-              <span className="bar bar-1">
-                <BarSlot image={barImg1} videoSrc={barVideo1} />
-              </span>
-              <span className="bar bar-2">
-                <BarSlot image={barImg2} videoSrc={barVideo2} />
-              </span>
-              <span className="bar bar-3">
-                <BarSlot image={barImg3} videoSrc={barVideo3} />
-              </span>
-              <span className="bar bar-4">
-                <BarSlot image={barImg4} videoSrc={barVideo4} />
-              </span>
+              {BAR_SLOTS.map((b) => (
+                <span key={b.cls} className={`bar ${b.cls}`}>
+                  <BarSlot image={b.image} videoSrc={b.video} />
+                </span>
+              ))}
               <h1 className="headline">
                 <span>We are</span>
                 <span className="indent">Hapcraft</span>

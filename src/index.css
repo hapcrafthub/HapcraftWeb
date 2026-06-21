@@ -333,6 +333,9 @@ img {
 .headline {
   position: absolute;
   inset: 0;
+  /* The headline overlays the whole art box and is painted above the bars.
+     Without this it swallows every hover event, so bar videos never play. */
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
