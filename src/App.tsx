@@ -118,7 +118,7 @@ function useLazyVideoLoader() {
           }
 
           if (e.isIntersecting) {
-            if (!v.src && v.dataset.src) v.src = v.dataset.src;
+            if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); }
 
             if (isMobileMQ.matches && currentMobileVideo && currentMobileVideo !== v) {
               currentMobileVideo.pause();
@@ -209,6 +209,7 @@ export default function App() {
 
 function HomeCard({ card }: { card: Card }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const articleRef = useRef<HTMLElement>(null);
   const [hovered, setHovered] = useState(false);
   const lowPower = useLowPowerDevice();
 
@@ -242,8 +243,32 @@ function HomeCard({ card }: { card: Card }) {
     else { setHovered(true); playVideo(); }
   };
 
+  // Mobile: auto-play card video when scrolled into view instead of waiting for tap
+  useEffect(() => {
+    if (!card.hoverVideo || lowPower) return;
+    if (!window.matchMedia("(max-width: 768px)").matches) return;
+    const el = articleRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      const v = videoRef.current;
+      if (!v) return;
+      if (entry.isIntersecting) {
+        setHovered(true);
+        if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+        v.play().catch(() => {});
+      } else {
+        setHovered(false);
+        v.pause();
+        v.currentTime = 0;
+      }
+    }, { threshold: 0.4 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [card.hoverVideo, lowPower]);
+
   return (
     <article
+      ref={articleRef as React.Ref<HTMLElement>}
       className={`card img-${card.imageSide}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -331,8 +356,8 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
-            <path d="M10 6 L10 90 L68 48 Z" fill="var(--cream)" opacity="0.9" />
+          <svg className="nav-overlay__arrow" width="80" height="67" viewBox="0 0 120 100" fill="none" aria-hidden="true">
+            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="var(--orange)" opacity="0.9" />
           </svg>
           {(
             [
@@ -401,21 +426,24 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
 
           {/* Expand toggle + remaining 3 cards */}
           <div className="work-expand-wrap">
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               className={`work-expand-btn${cardsExpanded ? " is-open" : ""}`}
               onClick={() => setCardsExpanded(v => !v)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCardsExpanded(v => !v); } }}
               aria-expanded={cardsExpanded}
-              aria-label={cardsExpanded ? "Show less" : "See more work"}
+              aria-label={cardsExpanded ? "Collapse" : "Explore More"}
             >
               <span className="work-expand-line" />
               <span className="work-expand-inner">
-                {cardsExpanded ? "Show Less" : "See More Work"}
+                {cardsExpanded ? "Collapse" : "Explore More"}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M2.5 5L7 9.5L11.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </span>
               <span className="work-expand-line" />
-            </button>
+            </div>
 
             <div className={`work-cards-expand${cardsExpanded ? " is-open" : ""}`} aria-hidden={!cardsExpanded}>
               <div className="work-cards-expand-inner">

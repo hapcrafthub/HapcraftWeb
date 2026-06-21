@@ -90,6 +90,7 @@ const groups: WorkGroup[] = [
 
 function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "s2" }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const [hovered, setHovered] = useState(false);
 
   const playVideo = () => { videoRef.current?.play().catch(() => {}); };
@@ -108,8 +109,31 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
 
   const isLarge = slot === "large";
 
+  useEffect(() => {
+    if (!card.hoverVideo) return;
+    if (!window.matchMedia("(max-width: 768px)").matches) return;
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      const v = videoRef.current;
+      if (!v) return;
+      if (entry.isIntersecting) {
+        setHovered(true);
+        if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+        v.play().catch(() => {});
+      } else {
+        setHovered(false);
+        v.pause();
+        v.currentTime = 0;
+      }
+    }, { threshold: 0.4 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [card.hoverVideo]);
+
   return (
     <article
+      ref={containerRef as React.Ref<HTMLElement>}
       className={`wp-card wp-card--${slot} ${isLarge ? "wp-card--col" : "wp-card--row"}${card.contain ? " wp-card--contain" : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -174,8 +198,8 @@ export default function WorkPage() {
           </button>
         </div>
         <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="72" height="96" viewBox="0 0 72 96" fill="none" aria-hidden="true">
-            <path d="M10 6 L10 90 L68 48 Z" fill="var(--cream)" opacity="0.9" />
+          <svg className="nav-overlay__arrow" width="80" height="67" viewBox="0 0 120 100" fill="none" aria-hidden="true">
+            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="var(--orange)" opacity="0.9" />
           </svg>
           {([
             { label: "Home",         to: "/" },

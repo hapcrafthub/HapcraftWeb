@@ -119,7 +119,9 @@ export default function ServicesPage() {
           </button>
         </div>
         <div className="ap-nav-links">
-          <Spark style={{ position: "absolute", right: "6%", top: "12%", width: 120, height: 120, pointerEvents: "none", opacity: 0.9, color: "#FF7A23" }} />
+          <svg style={{ position: "absolute", right: "6%", top: "12%", width: 80, height: 67, pointerEvents: "none", opacity: 0.9 }} viewBox="0 0 120 100" fill="none" aria-hidden="true">
+            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="#FF7A23" />
+          </svg>
           <Link to="/" className="ap-nav-link" onClick={() => setMenuOpen(false)}>Home</Link>
           <Link to="/work" className="ap-nav-link" onClick={() => setMenuOpen(false)}>Our Work</Link>
           <Link to="/services" className="ap-nav-link ap-nav-link--active" onClick={() => setMenuOpen(false)}>Our Services</Link>
@@ -132,7 +134,6 @@ export default function ServicesPage() {
         <div className="sp2-hero-inner">
           <div className="sp2-meta-bar reveal">
             <span className="sp2-meta-left">
-              <Spark fill="#FF7A23" style={{ width: 12, height: 12, flexShrink: 0 }} />
               What We Do
             </span>
             <span className="sp2-meta-right">Hapcraft</span>

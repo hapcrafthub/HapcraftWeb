@@ -677,7 +677,12 @@ img {
   right: 5%;
   top: 10%;
   pointer-events: none;
-  opacity: 0.80;
+  opacity: 0.85;
+}
+.work-expand-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 /* =================================================================
@@ -908,14 +913,19 @@ img {
   .wp-card--s1,
   .wp-card--s2 {
     flex-direction: column;
-    min-height: 320px;
+    min-height: unset;
   }
   .wp-card--s1 .wp-card__media,
   .wp-card--s2 .wp-card__media {
     flex: none;
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3;
+  }
+  .wp-card--s1 .wp-card__media img,
+  .wp-card--s2 .wp-card__media img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
   .wp-card--s1 .wp-card__body,
   .wp-card--s2 .wp-card__body {
@@ -1664,7 +1674,6 @@ img {
 .sp2-meta-left {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.22em;
@@ -1952,12 +1961,13 @@ img {
     flex: none;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    overflow: visible;
   }
   .card-media img {
-    height: 100%;
     width: 100%;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
+    display: block;
   }
   .card-body {
     padding: 28px 24px 32px;
