@@ -130,6 +130,7 @@ export default function AboutPage() {
             src={foundersImg}
             alt="Hapcraft Media Founders — Aditi Shori and Avichal Mishra"
             className="ap-founders-img"
+            loading="lazy"
           />
           {/* watermark cover */}
           <div className="ap-founders-cover" />

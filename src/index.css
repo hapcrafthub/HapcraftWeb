@@ -203,18 +203,8 @@ img {
           mask-position: center;
           mask-mode: alpha;
 
-  /* cream stroke + faint glow around the masked HAP letterforms — gives
-     the video-filled letters contrast against the #111 hero background */
-  filter:
-    drop-shadow( 4px 0 0 var(--cream))
-    drop-shadow(-4px 0 0 var(--cream))
-    drop-shadow( 0  4px 0 var(--cream))
-    drop-shadow( 0 -4px 0 var(--cream))
-    drop-shadow( 3px 3px 0 var(--cream))
-    drop-shadow(-3px 3px 0 var(--cream))
-    drop-shadow( 3px -3px 0 var(--cream))
-    drop-shadow(-3px -3px 0 var(--cream))
-    drop-shadow( 0 0 22px rgba(249, 246, 231, 0.18));
+  /* SVG morphology outline — 1 GPU pass instead of 9 drop-shadows */
+  filter: url(#hero-outline) drop-shadow(0 0 22px rgba(249, 246, 231, 0.18));
 }
 .hero-video {
   width: 100%;
@@ -617,8 +607,8 @@ img {
   inset: 0;
   z-index: 60;
   background: rgba(9, 9, 10, 0.60);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   transform: translateY(-100%);

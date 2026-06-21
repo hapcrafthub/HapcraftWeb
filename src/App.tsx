@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { useReveal } from "./hooks/useReveal";
 import hapMask from "./assets/hap-mask.png";
@@ -12,9 +12,9 @@ import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
 import barImgCamera from "./assets/bar-img-camera.jpg";
 import Logo from "./components/Logo";
-import WorkPage from "./pages/WorkPage";
-import AboutPage from "./pages/AboutPage";
-import ServicesPage from "./pages/ServicesPage";
+const WorkPage     = lazy(() => import("./pages/WorkPage"));
+const AboutPage    = lazy(() => import("./pages/AboutPage"));
+const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 import SiteFooter from "./components/SiteFooter";
 import IntroLoader from "./components/IntroLoader";
 
@@ -169,7 +169,7 @@ function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
         if (v) { v.pause(); v.currentTime = 0; }
       }}
     >
-      <img className="bar-img" src={image} alt="" />
+      <img className="bar-img" src={image} alt="" fetchPriority="low" />
       {!lowPower && (
         <video
           ref={videoRef}
@@ -236,12 +236,14 @@ export default function App() {
   return (
     <>
       {!introDone && <IntroLoader onDone={() => setIntroDone(true)} />}
-      <Routes>
-        <Route path="/work" element={<WorkPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="*" element={<HomePage menuOpen={menuOpen} setMenuOpen={setMenuOpen} />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/work" element={<WorkPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="*" element={<HomePage menuOpen={menuOpen} setMenuOpen={setMenuOpen} />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }

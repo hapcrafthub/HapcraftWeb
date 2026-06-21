@@ -13,6 +13,19 @@
     />
   </head>
   <body>
+    <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+      <defs>
+        <filter id="hero-outline" color-interpolation-filters="sRGB" x="-5%" y="-5%" width="110%" height="110%">
+          <feMorphology in="SourceAlpha" operator="dilate" radius="4" result="expanded"/>
+          <feFlood flood-color="#f9f6e7" result="color"/>
+          <feComposite in="color" in2="expanded" operator="in" result="outline"/>
+          <feMerge>
+            <feMergeNode in="outline"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
