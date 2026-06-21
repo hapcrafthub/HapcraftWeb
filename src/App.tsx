@@ -20,27 +20,18 @@ import IntroLoader from "./components/IntroLoader";
 
 const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
 // Optimized delivery: automatic format + quality, width-capped, progressive/streaming.
-const BAR_TX = "q_auto:eco,f_auto,w_400,fps_15";
 const HERO_TX = "q_auto,f_auto,w_1280";
 const CROWD_TX = "q_auto,f_auto,w_900";
 const CROWD_POSTER_TX = "so_0,w_900,f_jpg,q_auto";
 
 const HERO_ID = "sux_1_nkr4ij";
 const CROWD_ID = "iams_vid_flkxaa"; // Arya Mahasammelan crowd hover video
-const BAR1_ID = "Indian_couple_posing_professionally_202606140158_tn9k9u";
-const BAR2_ID = "km_20260614-1_1080p_30f_20260614_015641_gquod9";
-const BAR3_ID = "km_20260614_1080p_30f_20260614_015516_zqyyp3";
-const BAR4_ID = "Indian_guy_doing_act_202606140159_z0iqja";
 
 const hapVideo = `${CLOUDINARY}/${HERO_TX}/${HERO_ID}.mp4`;
 const hapPoster = `${CLOUDINARY}/so_0,w_1280,f_jpg,q_auto/${HERO_ID}.jpg`;
 const hapPosterMobile = `${CLOUDINARY}/so_0,w_720,f_jpg,q_auto/${HERO_ID}.jpg`;
 const crowdVideo = `${CLOUDINARY}/${CROWD_TX}/${CROWD_ID}.mp4`;
 const crowdPoster = `${CLOUDINARY}/${CROWD_POSTER_TX}/${CROWD_ID}.jpg`;
-const barVideo1 = `${CLOUDINARY}/${BAR_TX}/${BAR1_ID}.mp4`;
-const barVideo2 = `${CLOUDINARY}/${BAR_TX}/${BAR2_ID}.mp4`;
-const barVideo3 = `${CLOUDINARY}/${BAR_TX}/${BAR3_ID}.mp4`;
-const barVideo4 = `${CLOUDINARY}/${BAR_TX}/${BAR4_ID}.mp4`;
 
 function useLowPowerDevice() {
   const get = () =>
@@ -148,44 +139,19 @@ function useLazyVideoLoader() {
   }, []);
 }
 
-function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [hovered, setHovered] = useState(false);
-  const lowPower = useLowPowerDevice();
-
+function BarSlot({ image }: { image: string }) {
   return (
-    <div
-      style={{ position: "absolute", inset: 0 }}
-      onMouseEnter={() => {
-        if (lowPower) return;
-        setHovered(true);
-        const v = videoRef.current;
-        if (v) { if (!v.src) v.src = videoSrc; v.play().catch(() => {}); }
-      }}
-      onMouseLeave={() => {
-        if (lowPower) return;
-        setHovered(false);
-        const v = videoRef.current;
-        if (v) { v.pause(); v.currentTime = 0; }
-      }}
-    >
+    <div style={{ position: "absolute", inset: 0 }}>
       <img className="bar-img" src={image} alt="" fetchPriority="low" />
-      {!lowPower && (
-        <video
-          ref={videoRef}
-          className={`bar-video-hover${hovered ? " visible" : ""}`}
-          muted loop playsInline preload="none"
-        />
-      )}
     </div>
   );
 }
 
-const BAR_SLOTS: { cls: string; image: string; video: string }[] = [
-  { cls: "bar-1", image: barImg1,      video: barVideo1 },
-  { cls: "bar-2", image: barImgCamera, video: barVideo4 },
-  { cls: "bar-3", image: barImg2,      video: barVideo2 },
-  { cls: "bar-4", image: barImg3,      video: barVideo3 },
+const BAR_SLOTS: { cls: string; image: string }[] = [
+  { cls: "bar-1", image: barImg1 },
+  { cls: "bar-2", image: barImg3 },      // swapped: was barImgCamera
+  { cls: "bar-3", image: barImg2 },      // girl with phones
+  { cls: "bar-4", image: barImgCamera }, // swapped: was barImg3
 ];
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
@@ -225,6 +191,7 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIntroDone(false); // replay intro animation on every page change
   }, [location.pathname]);
 
   useEffect(() => {
@@ -235,7 +202,7 @@ export default function App() {
 
   return (
     <>
-      {!introDone && <IntroLoader onDone={() => setIntroDone(true)} />}
+      {!introDone && <IntroLoader key={location.pathname} onDone={() => setIntroDone(true)} />}
       <Suspense fallback={null}>
         <Routes>
           <Route path="/work" element={<WorkPage />} />
@@ -252,6 +219,7 @@ function HomeCard({ card }: { card: Card }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const articleRef = useRef<HTMLElement>(null);
   const [hovered, setHovered] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const lowPower = useLowPowerDevice();
 
   const playVideo = () => {
@@ -305,7 +273,7 @@ function HomeCard({ card }: { card: Card }) {
   return (
     <article
       ref={articleRef as React.Ref<HTMLElement>}
-      className={`card img-${card.imageSide}`}
+      className="card"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerDown={handleTouch}
@@ -327,7 +295,14 @@ function HomeCard({ card }: { card: Card }) {
       </div>
       <div className="card-body">
         <h3>{card.title}</h3>
-        <p>{card.summary}</p>
+        <button
+          className={`card-toggle${showSummary ? " is-open" : ""}`}
+          onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
+        >
+          <span className="card-toggle-icon">{showSummary ? "−" : "+"}</span>
+          <span>{showSummary ? "Less" : "Read more"}</span>
+        </button>
+        {showSummary && <p className="card-summary">{card.summary}</p>}
       </div>
     </article>
   );
@@ -417,7 +392,7 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
             <div className="headline-art">
               {BAR_SLOTS.map((b) => (
                 <span key={b.cls} className={`bar ${b.cls}`}>
-                  <BarSlot image={b.image} videoSrc={b.video} />
+                  <BarSlot image={b.image} />
                 </span>
               ))}
               <h1 className="headline">
@@ -448,12 +423,16 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
       {/* ===================== WORK ===================== */}
       <section className="work">
         <div className="work-inner">
-          {/* First card — always visible */}
-          <div className="reveal" style={{ '--reveal-delay': '0s' } as React.CSSProperties}>
-            <HomeCard card={cards[0]} />
+          {/* First 2 cards — always visible in 2-column grid */}
+          <div className="work-cards-grid">
+            {cards.slice(0, 2).map((card, i) => (
+              <div key={i} className="reveal" style={{ '--reveal-delay': `${i * 0.1}s` } as React.CSSProperties}>
+                <HomeCard card={card} />
+              </div>
+            ))}
           </div>
 
-          {/* Expand toggle + remaining 3 cards */}
+          {/* Expand toggle + remaining 2 cards */}
           <div className="work-expand-wrap">
             <div
               role="button"
@@ -476,8 +455,8 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
 
             <div className={`work-cards-expand${cardsExpanded ? " is-open" : ""}`} aria-hidden={!cardsExpanded}>
               <div className="work-cards-expand-inner">
-                {cards.slice(1).map((card, i) => (
-                  <div key={i + 1} className="reveal" style={{ '--reveal-delay': `${(i + 1) * 0.1}s` } as React.CSSProperties}>
+                {cards.slice(2).map((card, i) => (
+                  <div key={i + 2} className="reveal" style={{ '--reveal-delay': `${(i + 1) * 0.1}s` } as React.CSSProperties}>
                     <HomeCard card={card} />
                   </div>
                 ))}
