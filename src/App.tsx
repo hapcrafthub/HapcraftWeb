@@ -298,9 +298,12 @@ function HomeCard({ card }: { card: Card }) {
         <button
           className={`card-toggle${showSummary ? " is-open" : ""}`}
           onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
+          aria-label={showSummary ? "Hide details" : "Show details"}
         >
-          <span className="card-toggle-icon">{showSummary ? "−" : "+"}</span>
-          <span>{showSummary ? "Less" : "Read more"}</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="card-toggle-vert"/>
+            <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
         </button>
         {showSummary && <p className="card-summary">{card.summary}</p>}
       </div>
@@ -309,18 +312,8 @@ function HomeCard({ card }: { card: Card }) {
 }
 
 function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (v: boolean | ((p: boolean) => boolean)) => void }) {
-  const [cardsExpanded, setCardsExpanded] = useState(false);
   useReveal();
   useLazyVideoLoader();
-
-  useEffect(() => {
-    if (!cardsExpanded) return;
-    const t = setTimeout(() => {
-      document.querySelectorAll(".work-cards-expand .reveal:not(.is-visible)")
-        .forEach(el => el.classList.add("is-visible"));
-    }, 80);
-    return () => clearTimeout(t);
-  }, [cardsExpanded]);
   return (
     <div className="page">
       {/* ===================== HERO ===================== */}
@@ -423,45 +416,13 @@ function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (
       {/* ===================== WORK ===================== */}
       <section className="work">
         <div className="work-inner">
-          {/* First 2 cards — always visible in 2-column grid */}
+          {/* All 4 cards in a 2-column grid */}
           <div className="work-cards-grid">
-            {cards.slice(0, 2).map((card, i) => (
-              <div key={i} className="reveal" style={{ '--reveal-delay': `${i * 0.1}s` } as React.CSSProperties}>
+            {cards.map((card, i) => (
+              <div key={i} className="reveal" style={{ '--reveal-delay': `${i * 0.08}s` } as React.CSSProperties}>
                 <HomeCard card={card} />
               </div>
             ))}
-          </div>
-
-          {/* Expand toggle + remaining 2 cards */}
-          <div className="work-expand-wrap">
-            <div
-              role="button"
-              tabIndex={0}
-              className={`work-expand-btn${cardsExpanded ? " is-open" : ""}`}
-              onClick={() => setCardsExpanded(v => !v)}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCardsExpanded(v => !v); } }}
-              aria-expanded={cardsExpanded}
-              aria-label={cardsExpanded ? "Collapse" : "Explore More"}
-            >
-              <span className="work-expand-line" />
-              <span className="work-expand-inner">
-                {cardsExpanded ? "Collapse" : "Explore More"}
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path d="M2.5 5L7 9.5L11.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
-              <span className="work-expand-line" />
-            </div>
-
-            <div className={`work-cards-expand${cardsExpanded ? " is-open" : ""}`} aria-hidden={!cardsExpanded}>
-              <div className="work-cards-expand-inner">
-                {cards.slice(2).map((card, i) => (
-                  <div key={i + 2} className="reveal" style={{ '--reveal-delay': `${(i + 1) * 0.1}s` } as React.CSSProperties}>
-                    <HomeCard card={card} />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div className="work-cta">

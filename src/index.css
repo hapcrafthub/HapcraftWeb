@@ -473,34 +473,37 @@ img {
   margin-bottom: 10px;
 }
 
-/* Expandable summary toggle button */
+/* Expandable summary toggle — small orange circle with +/× */
 .card-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  padding: 7px 18px;
+  justify-content: center;
+  margin-top: 20px;
+  width: 34px;
+  height: 34px;
   border: 1.5px solid var(--orange);
   color: var(--orange);
   background: transparent;
-  border-radius: 100px;
+  border-radius: 50%;
   cursor: pointer;
-  font-family: 'Hanken Grotesk', system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: background 0.22s ease, color 0.22s ease;
+  transition: background 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
 }
-.card-toggle:hover,
+.card-toggle:hover {
+  background: var(--orange);
+  color: #000;
+}
+.card-toggle:hover svg line,
+.card-toggle.is-open:not(:hover) svg line {
+  stroke: currentColor;
+}
 .card-toggle.is-open {
   background: var(--orange);
   color: #000;
 }
-.card-toggle-icon {
-  font-size: 17px;
-  line-height: 1;
-  font-weight: 400;
+/* hide the vertical bar when open (turns + into −) */
+.card-toggle.is-open .card-toggle-vert {
+  opacity: 0;
 }
 .card-summary {
   margin-top: 16px;
