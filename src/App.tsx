@@ -295,18 +295,17 @@ function HomeCard({ card }: { card: Card }) {
       </div>
       <div className="card-body">
         <h3>{card.title}</h3>
-        <button
-          className={`card-toggle${showSummary ? " is-open" : ""}`}
-          onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
-          aria-label={showSummary ? "Hide details" : "Show details"}
-        >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="card-toggle-vert"/>
-            <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-          </svg>
-        </button>
-        {showSummary && <p className="card-summary">{card.summary}</p>}
       </div>
+      <button
+        className={`card-tab${showSummary ? " is-open" : ""}`}
+        onClick={(e) => { e.stopPropagation(); setShowSummary(v => !v); }}
+        aria-label={showSummary ? "Hide details" : "Show details"}
+      >
+        <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden="true">
+          <path d="M1 1L9 9L17 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {showSummary && <p className="card-summary">{card.summary}</p>}
     </article>
   );
 }
