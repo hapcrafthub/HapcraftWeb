@@ -6,7 +6,7 @@ import eventPhoto from "./assets/event.png";
 import crowdAerial from "./assets/Screenshot 2026-06-14 021330.png";
 import govtMeeting from "./assets/govt-meeting.jpg";
 import mrPotato from "./assets/mr-potato-photo.jpg";
-import jobipoNew from "./assets/jobipo-new.png";
+import jobipoCard from "./assets/Picsart_26-06-21_18-11-28-921.jpg";
 import barImg1 from "./assets/bar-img-1.jpg";
 import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
@@ -197,8 +197,7 @@ const cards: Card[] = [
   },
   {
     imageSide: "right",
-    image: jobipoNew,
-    imageContain: true,
+    image: jobipoCard,
     title: "Repostioned india's smartest Affiliate Platform: JOBIPO",
     summary: "We served as the brand strategist for Jobipo, designing a content strategy to attract their target audience. This targeted approach successfully generated all organic outreach for the platform.",
   },
