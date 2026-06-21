@@ -8,8 +8,8 @@ import govtMeeting from "./assets/govt-meeting.jpg";
 import mrPotato from "./assets/mr-potato-photo.jpg";
 import jobipo from "./assets/jobipo.png";
 import barImg1 from "./assets/bar-img-1.jpg";
+import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
-import barImg4 from "./assets/bar-img-4.jpg";
 import barImgCamera from "./assets/bar-img-camera.jpg";
 import Logo from "./components/Logo";
 import WorkPage from "./pages/WorkPage";
@@ -184,7 +184,7 @@ function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
 const BAR_SLOTS: { cls: string; image: string; video: string }[] = [
   { cls: "bar-1", image: barImg1,      video: barVideo1 },
   { cls: "bar-2", image: barImgCamera, video: barVideo4 },
-  { cls: "bar-3", image: barImg4,      video: barVideo2 },
+  { cls: "bar-3", image: barImg2,      video: barVideo2 },
   { cls: "bar-4", image: barImg3,      video: barVideo3 },
 ];
 
