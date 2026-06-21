@@ -937,8 +937,16 @@ img {
     height: 100%;
     object-fit: cover;
   }
+  /* Contain cards: drop forced ratio, show full image at natural proportions */
+  .wp-card--large.wp-card--contain .wp-card__media {
+    aspect-ratio: unset;
+    background: transparent;
+  }
   .wp-card--large.wp-card--contain .wp-card__media img {
-    object-fit: contain;
+    width: 100%;
+    height: auto;
+    object-fit: initial;
+    padding: 0;
   }
 }
 @media (max-width: 560px) {
