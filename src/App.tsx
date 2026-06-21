@@ -8,8 +8,8 @@ import govtMeeting from "./assets/govt-meeting.jpg";
 import mrPotato from "./assets/mr-potato-photo.jpg";
 import jobipo from "./assets/jobipo.png";
 import barImg1 from "./assets/bar-img-1.jpg";
-import barImg2 from "./assets/bar-img-2.jpg";
 import barImg3 from "./assets/bar-img-3.jpg";
+import barImg4 from "./assets/bar-img-4.jpg";
 import barImgCamera from "./assets/bar-img-camera.jpg";
 import Logo from "./components/Logo";
 import WorkPage from "./pages/WorkPage";
@@ -181,13 +181,11 @@ function BarSlot({ image, videoSrc }: { image: string; videoSrc: string }) {
   );
 }
 
-// Bar media mapping (image + paired hover video). Reordered per request:
-//   bar-1 unchanged · bar-2 ← old 3rd · bar-3 ← old 4th video + new camera image · bar-4 ← old 2nd
 const BAR_SLOTS: { cls: string; image: string; video: string }[] = [
   { cls: "bar-1", image: barImg1,      video: barVideo1 },
-  { cls: "bar-2", image: barImg3,      video: barVideo3 },
-  { cls: "bar-3", image: barImgCamera, video: barVideo4 },
-  { cls: "bar-4", image: barImg2,      video: barVideo2 },
+  { cls: "bar-2", image: barImgCamera, video: barVideo4 },
+  { cls: "bar-3", image: barImg4,      video: barVideo2 },
+  { cls: "bar-4", image: barImg3,      video: barVideo3 },
 ];
 
 type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string };
@@ -227,7 +225,6 @@ export default function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIntroDone(false);
   }, [location.pathname]);
 
   useEffect(() => {

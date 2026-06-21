@@ -16,5 +16,5 @@ export function useReveal(rootMargin = "0px 0px -60px 0px") {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  });
+  }, []);
 }
