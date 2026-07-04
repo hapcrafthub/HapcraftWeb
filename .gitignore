@@ -10,6 +10,7 @@ assets-dl/
 top-strip.png
 
 dist-ssr
+tsconfig.tsbuildinfo
 *.local
 .env
 .env.*
