@@ -9,12 +9,12 @@ const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  // Intro animation plays once on first load only, not on every internal navigation.
   const [introDone, setIntroDone] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIntroDone(false); // replay intro animation on every page change
   }, [location.pathname]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      {!introDone && <IntroLoader key={location.pathname} onDone={() => setIntroDone(true)} />}
+      {!introDone && <IntroLoader onDone={() => setIntroDone(true)} />}
       <Suspense fallback={null}>
         <Routes>
           <Route path="/work" element={<WorkPage />} />
