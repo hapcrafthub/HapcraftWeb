@@ -3,15 +3,15 @@ import { Link } from "react-router-dom";
 import { useReveal } from "../hooks/useReveal";
 import SiteFooter from "../components/SiteFooter";
 import Logo from "../components/Logo";
-import crowdAerial from "../assets/Screenshot 2026-06-14 021330.png";
-import govtMeeting from "../assets/govt-meeting.jpg";
-import mrPotato from "../assets/mr-potato-photo.jpg";
-import jobipo from "../assets/jobipo-new.png";
-import gitaJayanti from "../assets/gita-jayanti.jpg";
+import crowdAerial from "../assets/crowd-aerial.webp";
+import govtMeeting from "../assets/govt-meeting.webp";
+import mrPotato from "../assets/mr-potato-photo.webp";
+import jobipo from "../assets/jobipo-new.webp";
+import gitaJayanti from "../assets/gita-jayanti.webp";
 import vedicTree from "../assets/vedic-tree.jpg";
 import cafeRiverio from "../assets/cafe-riverio.webp";
 import frillsBrand from "../assets/frills-brand.webp";
-import goeLogo from "../assets/1781850285355.png";
+import goeLogo from "../assets/goe-logo-photo.webp";
 
 interface WorkCard {
   title: string;

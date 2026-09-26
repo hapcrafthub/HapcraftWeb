@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useReveal } from "../hooks/useReveal";
-import hapMask from "../assets/hap-mask.png";
+import hapMask from "../assets/hap-mask.webp";
 import eventPhoto from "../assets/event.png";
-import crowdAerial from "../assets/Screenshot 2026-06-14 021330.png";
-import govtMeeting from "../assets/govt-meeting.jpg";
-import mrPotato from "../assets/mr-potato-photo.jpg";
-import jobipoCard from "../assets/Picsart_26-06-21_18-11-28-921.jpg";
-import barImg1 from "../assets/bar-img-1.jpg";
-import barImg2 from "../assets/bar-img-2.jpg";
-import barImg3 from "../assets/bar-img-3.jpg";
-import barImgCamera from "../assets/bar-img-camera.jpg";
+import crowdAerial from "../assets/crowd-aerial.webp";
+import govtMeeting from "../assets/govt-meeting.webp";
+import mrPotato from "../assets/mr-potato-photo.webp";
+import jobipoCard from "../assets/jobipo-card.webp";
+import barImg1 from "../assets/bar-img-1.webp";
+import barImg2 from "../assets/bar-img-2.webp";
+import barImg3 from "../assets/bar-img-3.webp";
+import barImgCamera from "../assets/bar-img-camera.webp";
 import Logo from "../components/Logo";
 import SiteFooter from "../components/SiteFooter";
 
@@ -157,7 +157,7 @@ function BarSlot({ image }: { image: string }) {
 
   return (
     <div style={{ position: "absolute", inset: 0 }}>
-      <img ref={imgRef} className="bar-img" src={image} alt="" fetchPriority="low" />
+      <img ref={imgRef} className="bar-img" src={image} alt="" loading="lazy" decoding="async" fetchPriority="low" />
     </div>
   );
 }
@@ -266,6 +266,8 @@ function HomeCard({ card }: { card: Card }) {
         <img
           src={card.image ?? eventPhoto}
           alt="Event"
+          loading="lazy"
+          decoding="async"
           style={card.imageContain ? { objectFit: "contain", background: "#f5f0e8" } : undefined}
         />
         {card.hoverVideo && !lowPower && (

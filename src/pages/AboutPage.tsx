@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useReveal } from "../hooks/useReveal";
 import Logo from "../components/Logo";
-import foundersImg from "../assets/founders.png";
+import foundersImg from "../assets/founders.webp";
 import SiteFooter from "../components/SiteFooter";
 
 const Spark = ({ style, fill = "currentColor" }: { style?: React.CSSProperties; fill?: string }) => (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logoSrc from "../assets/logo.png";
+import logoSrc from "../assets/logo.webp";
 
 export default function IntroLoader({ onDone }: { onDone: () => void }) {
   const [hiding, setHiding] = useState(false);

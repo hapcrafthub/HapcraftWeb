@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { useReveal } from "../hooks/useReveal";
 import Logo from "../components/Logo";
 import SiteFooter from "../components/SiteFooter";
-import imgAiCreative   from "../assets/make_him_look_like_indian_202606180408.jpeg";
-import imgWebsite      from "../assets/remove_all_typography_,_just_202606180410 - Copy.jpeg";
-import imgAiInfra      from "../assets/make_him_look_like_indian_202606180419.jpeg";
-import imgContent      from "../assets/make_him_look_little_fair_202606180425.jpeg";
-import imgProduct      from "../assets/make_bacground_orange_2K_202606180403.jpeg";
-import imgPerformance  from "../assets/just_write_big_bold_word_202606180403 - Copy.jpeg";
+import imgAiCreative   from "../assets/service-ai-creative.webp";
+import imgWebsite      from "../assets/service-website.webp";
+import imgAiInfra      from "../assets/service-ai-infra.webp";
+import imgContent      from "../assets/service-content.webp";
+import imgProduct      from "../assets/service-product.webp";
+import imgPerformance  from "../assets/service-performance.webp";
 
 
 interface ServiceCard {
