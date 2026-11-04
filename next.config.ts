@@ -4,11 +4,10 @@ const nextConfig: NextConfig = {
   // Keeps the URLs the old site already had in Google (/work/, /about/, /services/).
   trailingSlash: true,
   images: {
-    formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 60 * 60 * 24 * 31,
-    // Every source image is at most 2400 px wide, so there is no point generating 2048/3840 px variants.
-    deviceSizes: [480, 640, 768, 1024, 1280, 1600, 1920],
-    imageSizes: [96, 140, 256, 384],
+    // Images are served as the already-optimised WebP files in src/assets. Vercel's image optimizer
+    // (/_next/image) is metered per account and was returning 402 Payment Required, which broke
+    // every image on the live site, so it stays off. Turn it back on only if the plan allows it.
+    unoptimized: true,
   },
   async headers() {
     return [
