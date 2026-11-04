@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image, { type StaticImageData } from "next/image";
 import { useReveal } from "@/hooks/useReveal";
 import { useEscape } from "@/hooks/useEscape";
+import { FAQS } from "@/lib/site";
 import hapMask from "@/assets/hap-mask.webp";
 import crowdAerial from "@/assets/crowd-aerial.webp";
 import govtMeeting from "@/assets/govt-meeting.webp";
@@ -394,15 +395,12 @@ export default function HomeView() {
 
           <h2 style={{ fontSize: "28px", marginBottom: "20px" }}>Frequently Asked Questions</h2>
 
-          <div style={{ marginBottom: "20px" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: What core technical services does Hapcraft provide?</h3>
-            <p style={{ fontSize: "18px" }}>A: We specialize in custom web development, building AI-powered business infrastructure, and implementing advanced AI automation to help your business scale efficiently.</p>
-          </div>
-
-          <div style={{ marginBottom: "20px" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: How do you approach content creation for brands?</h3>
-            <p style={{ fontSize: "18px" }}>A: We focus on AI content creation and high-quality cinematographic media. We produce premium branded content designed specifically to make your brand stand out and dominate on social media.</p>
-          </div>
+          {FAQS.map((f) => (
+            <div key={f.question} style={{ marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: {f.question}</h3>
+              <p style={{ fontSize: "18px" }}>A: {f.answer}</p>
+            </div>
+          ))}
         </div>
       </section>
 

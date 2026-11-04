@@ -61,6 +61,20 @@ export function getRoute(path: string): Route {
   return ROUTES.find((r) => r.path === path) ?? ROUTES[0];
 }
 
+// Shown at the bottom of the home page and published as FAQPage structured data.
+export const FAQS: { question: string; answer: string }[] = [
+  {
+    question: "What core technical services does Hapcraft provide?",
+    answer:
+      "We specialize in custom web development, building AI-powered business infrastructure, and implementing advanced AI automation to help your business scale efficiently.",
+  },
+  {
+    question: "How do you approach content creation for brands?",
+    answer:
+      "We focus on AI content creation and high-quality cinematographic media. We produce premium branded content designed specifically to make your brand stand out and dominate on social media.",
+  },
+];
+
 /** Canonical URL with a trailing slash, matching what the old site published. */
 export function canonicalUrl(path: string): string {
   return `${SITE_URL}${path}/`.replace(/\/+$/, "/");

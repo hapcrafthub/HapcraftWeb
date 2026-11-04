@@ -1,4 +1,4 @@
-import { ORG_NAME, SAME_AS, SERVICES, SITE_URL, canonicalUrl, getRoute } from "./site";
+import { FAQS, ORG_NAME, SAME_AS, SERVICES, SITE_URL, canonicalUrl, getRoute } from "./site";
 
 /** Serialises JSON-LD for a <script> tag; "<" is escaped so content can never close the tag. */
 export function ldJson(blocks: object | object[]): string {
@@ -20,6 +20,15 @@ export function pageLd(path: string): object[] {
         sameAs: SAME_AS,
       },
       { "@context": "https://schema.org", "@type": "WebSite", name: ORG_NAME, url: canonical },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: FAQS.map((f) => ({
+          "@type": "Question",
+          name: f.question,
+          acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
+      },
     ];
   }
 

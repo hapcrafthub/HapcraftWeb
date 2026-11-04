@@ -1,0 +1,29 @@
+# Hapcraft Media
+
+> Hapcraft (Hapcraft Media Private Limited) is a brand strategy and creative production studio based in India. It builds AI-powered business infrastructure and runs branding and marketing for businesses, from major public events and government partnerships to food chains, cafes, boutiques, schools and digital platforms.
+
+Founders: Avichal Mishra (CEO) and Aditi Shori (COO).
+
+## Pages
+
+- [Home](https://www.hapcraftmedia.com/): who Hapcraft is, selected work and FAQs.
+- [Our Work](https://www.hapcraftmedia.com/work/): case studies across events, government, food, education, retail and technology.
+- [Our Services](https://www.hapcraftmedia.com/services/): the six services Hapcraft offers.
+- [About Us](https://www.hapcraftmedia.com/about/): the studio, its founders and its track record.
+- [Full text for AI assistants](https://www.hapcraftmedia.com/llms-full.txt): all of the above in one file.
+
+## Services
+
+- AI Creative Production: AI-driven visuals and content at scale, without the cost of studio shoots.
+- Custom Website Development: websites that build trust quickly and turn visitors into enquiries.
+- AI-Powered Business Infrastructure: automation and AI systems that remove repetitive work so teams can scale.
+- Content Strategic Blueprint: a distribution plan mapping every channel and audience moment.
+- Product Design: SKU development, brand strategy and category creation before launch.
+- Performance Marketing: paid ads, lead generation and ROI optimisation.
+
+## Contact
+
+- Email: support@hapcraftmedia.com
+- Instagram: https://www.instagram.com/hapcraftmedia
+- X: https://x.com/HapcraftMedia
+- LinkedIn: https://www.linkedin.com/company/hapcraftmedia/
