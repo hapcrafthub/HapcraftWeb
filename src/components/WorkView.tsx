@@ -1,22 +1,26 @@
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { useReveal } from "../hooks/useReveal";
-import SiteFooter from "../components/SiteFooter";
-import Logo from "../components/Logo";
-import crowdAerial from "../assets/crowd-aerial.webp";
-import govtMeeting from "../assets/govt-meeting.webp";
-import mrPotato from "../assets/mr-potato-photo.webp";
-import jobipo from "../assets/jobipo-new.webp";
-import gitaJayanti from "../assets/gita-jayanti.webp";
-import vedicTree from "../assets/vedic-tree.jpg";
-import cafeRiverio from "../assets/cafe-riverio.webp";
-import frillsBrand from "../assets/frills-brand.webp";
-import goeLogo from "../assets/goe-logo-photo.webp";
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import Image, { type StaticImageData } from "next/image";
+import { useReveal } from "@/hooks/useReveal";
+import { useEscape } from "@/hooks/useEscape";
+import PageHeader from "./PageHeader";
+import NavOverlay from "./NavOverlay";
+import SiteFooter from "./SiteFooter";
+import crowdAerial from "@/assets/crowd-aerial.webp";
+import govtMeeting from "@/assets/govt-meeting.webp";
+import mrPotato from "@/assets/mr-potato-photo.webp";
+import jobipo from "@/assets/jobipo-new.webp";
+import gitaJayanti from "@/assets/gita-jayanti.webp";
+import vedicTree from "@/assets/vedic-tree.jpg";
+import cafeRiverio from "@/assets/cafe-riverio.webp";
+import frillsBrand from "@/assets/frills-brand.webp";
+import goeLogo from "@/assets/goe-logo-photo.webp";
 
 interface WorkCard {
   title: string;
   description: string;
-  image?: string;
+  image: StaticImageData;
   hoverVideo?: string;
   contain?: boolean;
 }
@@ -133,14 +137,14 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
 
   return (
     <article
-      ref={containerRef as React.Ref<HTMLElement>}
+      ref={containerRef}
       className={`wp-card wp-card--${slot} ${isLarge ? "wp-card--col" : "wp-card--row"}${card.contain ? " wp-card--contain" : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerDown={handleTouch}
     >
       <div className="wp-card__media">
-        <img src={card.image ?? crowdAerial} alt={card.title} loading="lazy" />
+        <Image src={card.image} alt={card.title} sizes={isLarge ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 25vw"} />
         {card.hoverVideo && (
           <video
             ref={videoRef}
@@ -149,6 +153,7 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
             muted
             playsInline
             loop
+            preload="none"
           />
         )}
       </div>
@@ -160,59 +165,16 @@ function WorkCardItem({ card, slot }: { card: WorkCard; slot: "large" | "s1" | "
   );
 }
 
-export default function WorkPage() {
+export default function WorkView() {
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  useEscape(closeMenu);
   useReveal();
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <div className="work-page">
-      {/* ===== NAV ===== */}
-      <header className="wp-nav">
-        <Link to="/" aria-label="Home"><Logo className="wp-nav-logo" /></Link>
-        <button
-          className={`menu${menuOpen ? " is-open" : ""}`}
-          aria-label="Menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(v => !v)}
-        >
-          <span /><span /><span />
-        </button>
-      </header>
-
-      {/* ===== NAV OVERLAY ===== */}
-      <nav className={`nav-overlay${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
-        <div className="nav-overlay__top">
-          <Logo className="nav-logo" />
-          <button className="overlay-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
-              <line x1="6" y1="6" x2="22" y2="22" /><line x1="22" y1="6" x2="6" y2="22" />
-            </svg>
-          </button>
-        </div>
-        <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="80" height="67" viewBox="0 0 120 100" fill="none" aria-hidden="true">
-            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="var(--orange)" opacity="0.9" />
-          </svg>
-          {([
-            { label: "Home",         to: "/" },
-            { label: "Our Work",     to: "/work" },
-            { label: "Our Services", to: "/services" },
-            { label: "About Us",     to: "/about" },
-          ] as const).map(({ label, to }) => (
-            <Link key={label} to={to} onClick={() => setMenuOpen(false)}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <PageHeader menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
+      <NavOverlay open={menuOpen} onClose={closeMenu} />
 
       {/* ===== HERO ===== */}
       <section className="wp-hero">
@@ -223,7 +185,7 @@ export default function WorkPage() {
       <main className="wp-grid-wrap">
         <div className="wp-grid">
           {groups.map((group, i) => (
-            <div key={i} className={`wp-group wp-group--${group.largeSide} reveal`} style={{ '--reveal-delay': `${i * 0.1}s` } as React.CSSProperties}>
+            <div key={group.large.title} className={`wp-group wp-group--${group.largeSide} reveal`} style={{ '--reveal-delay': `${i * 0.1}s` } as React.CSSProperties}>
               <WorkCardItem card={group.large}  slot="large" />
               <WorkCardItem card={group.small1} slot="s1" />
               <WorkCardItem card={group.small2} slot="s2" />

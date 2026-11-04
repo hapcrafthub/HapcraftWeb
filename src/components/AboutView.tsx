@@ -1,9 +1,16 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useReveal } from "../hooks/useReveal";
-import Logo from "../components/Logo";
-import foundersImg from "../assets/founders.webp";
-import SiteFooter from "../components/SiteFooter";
+"use client";
+
+import { useState, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useReveal } from "@/hooks/useReveal";
+import { useEscape } from "@/hooks/useEscape";
+import PageHeader from "./PageHeader";
+import ApNavOverlay from "./ApNavOverlay";
+import ContactModal from "./ContactModal";
+import SocialLinks from "./SocialLinks";
+import SiteFooter from "./SiteFooter";
+import foundersImg from "@/assets/founders.webp";
 
 const Spark = ({ style, fill = "currentColor" }: { style?: React.CSSProperties; fill?: string }) => (
   <svg viewBox="0 0 100 100" style={style} aria-hidden="true">
@@ -11,76 +18,23 @@ const Spark = ({ style, fill = "currentColor" }: { style?: React.CSSProperties; 
   </svg>
 );
 
-export default function AboutPage() {
+export default function AboutView() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  useEffect(() => { window.scrollTo(0, 0); }, []);
   useReveal();
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setMenuOpen(false); setContactOpen(false); }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  const closeAll = useCallback(() => { setMenuOpen(false); setContactOpen(false); }, []);
+  useEscape(closeAll);
 
-  const openContact = () => { setContactOpen(true); setMenuOpen(false); setSent(false); };
-  const closeContact = () => setContactOpen(false);
+  const openContact = () => { setContactOpen(true); setMenuOpen(false); };
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const closeContact = useCallback(() => setContactOpen(false), []);
 
   return (
     <div className="about-page">
 
-      {/* ── STICKY HEADER ── */}
-      <header className="wp-nav">
-        <Link to="/" aria-label="Home"><Logo className="wp-nav-logo" /></Link>
-        <button
-          className={`menu${menuOpen ? " is-open" : ""}`}
-          aria-label="Menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(v => !v)}
-        >
-          <span /><span /><span />
-        </button>
-      </header>
-
-      {/* ── NAV OVERLAY ── */}
-      <nav
-        className="ap-nav-overlay"
-        style={{
-          transform: menuOpen ? "translateY(0)" : "translateY(-100%)",
-          pointerEvents: menuOpen ? "all" : "none",
-        }}
-        aria-hidden={!menuOpen}
-      >
-        <div className="ap-nav-top">
-          <Logo className="wp-nav-logo" />
-          <button className="ap-nav-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
-              <line x1="6" y1="6" x2="20" y2="20" /><line x1="20" y1="6" x2="6" y2="20" />
-            </svg>
-          </button>
-        </div>
-        <div className="ap-nav-links">
-          <svg style={{ position: "absolute", right: "6%", top: "12%", width: 80, height: 67, pointerEvents: "none", opacity: 0.9 }} viewBox="0 0 120 100" fill="none" aria-hidden="true">
-            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="var(--orange)" />
-          </svg>
-          <Link to="/" className="ap-nav-link" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-          <Link to="/work" className="ap-nav-link" onClick={() => setMenuOpen(false)}>
-            Our Work
-          </Link>
-          <Link to="/services" className="ap-nav-link" onClick={() => setMenuOpen(false)}>
-            Our Services
-          </Link>
-          <Link to="/about" className="ap-nav-link ap-nav-link--active" onClick={() => setMenuOpen(false)}>
-            About Us
-          </Link>
-        </div>
-      </nav>
+      <PageHeader menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
+      <ApNavOverlay open={menuOpen} onClose={closeMenu} active="/about" />
 
       {/* ── SECTION 1 — WHO WE ARE ── */}
       <section className="ap-hero reveal">
@@ -108,7 +62,7 @@ export default function AboutPage() {
           <p className="ap-sub-copy">
             From Bold Branding To Sharp Marketing — We Build The Systems That Turn Small Businesses Into Names People Remember.
           </p>
-          <Link to="/services" className="ap-pill-btn">Explore Our Services</Link>
+          <Link href="/services" className="ap-pill-btn">Explore Our Services</Link>
         </div>
       </section>
 
@@ -126,11 +80,11 @@ export default function AboutPage() {
       {/* ── FOUNDERS ── */}
       <section className="ap-founders reveal" style={{ '--reveal-delay': '0.1s' } as React.CSSProperties}>
         <div className="ap-founders-wrap">
-          <img
+          <Image
             src={foundersImg}
             alt="Hapcraft Media Founders — Aditi Shori and Avichal Mishra"
             className="ap-founders-img"
-            loading="lazy"
+            sizes="100vw"
           />
           {/* watermark cover */}
           <div className="ap-founders-cover" />
@@ -197,7 +151,7 @@ export default function AboutPage() {
                   </svg>
                 </div>
               </div>
-              <p className="ap-card-body">From Government Institutions To Food Startups, Vedic Lifestyle Events To Digital Platforms — We've Built Strategies That Drive Real, Measurable Results.</p>
+              <p className="ap-card-body">From Government Institutions To Food Startups, Vedic Lifestyle Events To Digital Platforms — We&apos;ve Built Strategies That Drive Real, Measurable Results.</p>
             </div>
           </div>
 
@@ -234,83 +188,17 @@ export default function AboutPage() {
       <section className="ap-cta reveal">
         <div className="ap-cta-inner">
           <p className="ap-cta-eyebrow">Ready To Be Unforgettable?</p>
-          <h2 className="ap-cta-heading">Let's Build Something<br />People Won't Forget.</h2>
+          <h2 className="ap-cta-heading">Let&apos;s Build Something<br />People Won&apos;t Forget.</h2>
           <div className="ap-cta-actions">
             <button className="ap-pill-btn" onClick={openContact}>Get In Touch</button>
-            <div className="ap-cta-socials">
-              <a href="https://www.instagram.com/hapcraftmedia?utm_source=qr&igsh=cHdmNHExMjQ2aWQ=" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Instagram">
-                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                </svg>
-              </a>
-              <a href="https://x.com/HapcraftMedia" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="X (Twitter)">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-              <a href="https://www.linkedin.com/company/hapcraftmedia/" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="LinkedIn">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
-                </svg>
-              </a>
-              <a href="mailto:support@hapcraftmedia.com" className="ap-social-btn" aria-label="Email">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>
-                </svg>
-              </a>
-            </div>
+            <SocialLinks />
           </div>
         </div>
       </section>
 
       <SiteFooter />
 
-      {/* ── CONTACT MODAL ── */}
-      {contactOpen && (
-        <div className="ap-modal-backdrop" onClick={closeContact}>
-          <div className="ap-modal" onClick={e => e.stopPropagation()}>
-            <button className="ap-modal-close" aria-label="Close" onClick={closeContact}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
-              </svg>
-            </button>
-
-            {!sent ? (
-              <>
-                <h2 className="ap-modal-title">
-                  Connect<br /><span className="ap-modal-orange">With Us.</span>
-                </h2>
-                <form
-                  className="ap-modal-form"
-                  onSubmit={e => { e.preventDefault(); setSent(true); }}
-                >
-                  <label className="ap-field-label">
-                    Name
-                    <input type="text" placeholder="Your full name" className="ap-field-input" required />
-                  </label>
-                  <label className="ap-field-label">
-                    Email
-                    <input type="email" placeholder="you@company.com" className="ap-field-input" required />
-                  </label>
-                  <label className="ap-field-label">
-                    About Your Business
-                    <textarea rows={3} placeholder="Tell us what you do and what you need..." className="ap-field-input ap-field-textarea" />
-                  </label>
-                  <button type="submit" className="ap-pill-btn ap-pill-btn--dark">Get In Touch</button>
-                </form>
-              </>
-            ) : (
-              <div className="ap-sent">
-                <h2 className="ap-sent-title">
-                  You're On The <span className="ap-sent-marker">List.</span>
-                </h2>
-                <p className="ap-sent-body">We'll Be In Touch Soon. Time To Get Unforgettable.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+      {contactOpen && <ContactModal onClose={closeContact} />}
     </div>
   );
 }

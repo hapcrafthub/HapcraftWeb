@@ -1,11 +1,24 @@
-// Single source of truth for public routes: sitemap.xml (generate-sitemap.mjs)
-// and the prerendered per-route <head> metadata (entry-server.tsx) both read
-// this file. Add a route here and it shows up in both automatically.
-// Keep in sync with src/App.tsx / src/PrerenderRoutes.tsx.
+// Single source of truth for public routes: the sitemap, each page's <head> metadata and its
+// JSON-LD all read from here. Add a route here and it shows up in all three.
 
 export const SITE_URL = "https://www.hapcraftmedia.com";
+export const ORG_NAME = "Hapcraft Media";
+export const SAME_AS = [
+  "https://www.instagram.com/hapcraftmedia",
+  "https://x.com/HapcraftMedia",
+  "https://www.linkedin.com/company/hapcraftmedia/",
+];
 
-export const ROUTES = [
+export type Route = {
+  path: string;
+  changefreq: "weekly" | "monthly";
+  priority: number;
+  title: string;
+  description: string;
+  breadcrumbLabel: string;
+};
+
+export const ROUTES: Route[] = [
   {
     path: "/",
     changefreq: "weekly",
@@ -44,10 +57,18 @@ export const ROUTES = [
   },
 ];
 
-// Mirrors the `services` list rendered in src/pages/ServicesPage.tsx, for the
-// Service/OfferCatalog JSON-LD on /services. Keep titles/descriptions in sync
-// with that file if the offerings change.
-export const SERVICES = [
+export function getRoute(path: string): Route {
+  return ROUTES.find((r) => r.path === path) ?? ROUTES[0];
+}
+
+/** Canonical URL with a trailing slash, matching what the old site published. */
+export function canonicalUrl(path: string): string {
+  return `${SITE_URL}${path}/`.replace(/\/+$/, "/");
+}
+
+// Short versions of the cards on /services, for the Service/OfferCatalog JSON-LD.
+// Keep in sync with src/components/ServicesView.tsx if the offerings change.
+export const SERVICES: { name: string; description: string }[] = [
   {
     name: "AI Creative Production",
     description:

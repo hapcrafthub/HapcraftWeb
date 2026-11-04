@@ -1,5 +1,7 @@
 node_modules
-dist
+.next
+out
+next-env.d.ts
 
 # Reference / design source material - not used at runtime
 design-file2.bin
@@ -9,11 +11,11 @@ design2/
 assets-dl/
 top-strip.png
 
-dist-ssr
 tsconfig.tsbuildinfo
 *.local
 .env
 .env.*
+.vercel
 .DS_Store
 *.log
 .vscode/*
@@ -24,3 +26,5 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
+launch.json
+settings.local.json

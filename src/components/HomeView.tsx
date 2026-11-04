@@ -1,18 +1,23 @@
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { useReveal } from "../hooks/useReveal";
-import hapMask from "../assets/hap-mask.webp";
-import eventPhoto from "../assets/event.png";
-import crowdAerial from "../assets/crowd-aerial.webp";
-import govtMeeting from "../assets/govt-meeting.webp";
-import mrPotato from "../assets/mr-potato-photo.webp";
-import jobipoCard from "../assets/jobipo-card.webp";
-import barImg1 from "../assets/bar-img-1.webp";
-import barImg2 from "../assets/bar-img-2.webp";
-import barImg3 from "../assets/bar-img-3.webp";
-import barImgCamera from "../assets/bar-img-camera.webp";
-import Logo from "../components/Logo";
-import SiteFooter from "../components/SiteFooter";
+"use client";
+
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
+import Link from "next/link";
+import Image, { type StaticImageData } from "next/image";
+import { useReveal } from "@/hooks/useReveal";
+import { useEscape } from "@/hooks/useEscape";
+import hapMask from "@/assets/hap-mask.webp";
+import crowdAerial from "@/assets/crowd-aerial.webp";
+import govtMeeting from "@/assets/govt-meeting.webp";
+import mrPotato from "@/assets/mr-potato-photo.webp";
+import jobipoCard from "@/assets/jobipo-card.webp";
+import barImg1 from "@/assets/bar-img-1.webp";
+import barImg2 from "@/assets/bar-img-2.webp";
+import barImg3 from "@/assets/bar-img-3.webp";
+import barImgCamera from "@/assets/bar-img-camera.webp";
+import Logo from "./Logo";
+import NavOverlay from "./NavOverlay";
+import SocialLinks from "./SocialLinks";
+import SiteFooter from "./SiteFooter";
 
 const CLOUDINARY = "https://res.cloudinary.com/di1udlyci/video/upload";
 // Optimized delivery: automatic format + quality, width-capped, progressive/streaming.
@@ -29,35 +34,36 @@ const hapPosterMobile = `${CLOUDINARY}/so_0,w_720,f_jpg,q_auto/${HERO_ID}.jpg`;
 const crowdVideo = `${CLOUDINARY}/${CROWD_TX}/${CROWD_ID}.mp4`;
 const crowdPoster = `${CLOUDINARY}/${CROWD_POSTER_TX}/${CROWD_ID}.jpg`;
 
-function useLowPowerDevice() {
-  const get = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const [low, setLow] = useState<boolean>(get);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setLow(mq.matches);
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return low;
+// Reads a media query without breaking server rendering: the server (and the first browser
+// render, while hydrating) assume "no match", then the real value takes over.
+function useMediaQuery(query: string) {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(query).matches,
+    () => false
+  );
 }
+
+const useLowPowerDevice = () => useMediaQuery("(prefers-reduced-motion: reduce)");
+const useIsNarrowScreen = () => useMediaQuery("(max-width: 767px)");
 
 type LazyVideoProps = {
   src: string;
   poster: string;
   mobilePoster?: string;
   className?: string;
-  videoRef?: React.Ref<HTMLVideoElement>;
 };
-function LazyVideo({ src, poster, mobilePoster, className, videoRef }: LazyVideoProps) {
+function LazyVideo({ src, poster, mobilePoster, className }: LazyVideoProps) {
   const lowPower = useLowPowerDevice();
-  const activePoster =
-    mobilePoster && typeof window !== "undefined" && window.innerWidth < 768
-      ? mobilePoster
-      : poster;
+  const narrow = useIsNarrowScreen();
+  const activePoster = mobilePoster && narrow ? mobilePoster : poster;
   if (lowPower) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- remote video poster, not a site image
       <img
         src={activePoster}
         alt=""
@@ -70,7 +76,6 @@ function LazyVideo({ src, poster, mobilePoster, className, videoRef }: LazyVideo
   }
   return (
     <video
-      ref={videoRef}
       className={className}
       data-src={src}
       poster={activePoster}
@@ -135,7 +140,7 @@ function useLazyVideoLoader() {
   }, []);
 }
 
-function BarSlot({ image }: { image: string }) {
+function BarSlot({ image }: { image: StaticImageData }) {
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -157,42 +162,38 @@ function BarSlot({ image }: { image: string }) {
 
   return (
     <div style={{ position: "absolute", inset: 0 }}>
-      <img ref={imgRef} className="bar-img" src={image} alt="" loading="lazy" decoding="async" fetchPriority="low" />
+      <Image ref={imgRef} className="bar-img" src={image} alt="" sizes="(max-width: 768px) 90vw, 45vw" fetchPriority="low" />
     </div>
   );
 }
 
-const BAR_SLOTS: { cls: string; image: string }[] = [
+const BAR_SLOTS: { cls: string; image: StaticImageData }[] = [
   { cls: "bar-1", image: barImg1 },
   { cls: "bar-2", image: barImg3 },      // swapped: was barImgCamera
   { cls: "bar-3", image: barImgCamera },
   { cls: "bar-4", image: barImg2 },      // girl with phones
 ];
 
-type Card = { imageSide: "left" | "right"; image?: string; hoverVideo?: string; title: string; summary: string; imageContain?: boolean };
+type Card = { image: StaticImageData; hoverVideo?: string; title: string; summary: string };
 
 const cards: Card[] = [
   {
-    imageSide: "left",
     image: crowdAerial,
     hoverVideo: crowdVideo,
     title: "co-Organised one of the world's biggest Event",
     summary: "We co-organized the Antarrashtriya Arya Mahasammelan 2025 in Delhi, managing the Vedic lifestyle and ancient education system vertical. The event successfully catered to a gathering of over 4.5 lakh people.",
   },
   {
-    imageSide: "right",
     image: govtMeeting,
     title: "Honoured to be the strategic partner in the government program",
     summary: "We served as a strategic partner in an official government program, joining a high-level meeting with the Governor of Gujarat, Acharya Devvrat.",
   },
   {
-    imageSide: "left",
     image: mrPotato,
     title: "Designed & Strategized the fastest scalable food chain",
     summary: "We developed the strategic expansion plan for the Hyderabad-based food chain, Mr. Potato. The scalable model achieved rapid profitability and became a favorite among children.",
   },
   {
-    imageSide: "right",
     image: jobipoCard,
     title: "Repostioned india's smartest Affiliate Platform: JOBIPO",
     summary: "We served as the brand strategist for Jobipo, designing a content strategy to attract their target audience. This targeted approach successfully generated all organic outreach for the platform.",
@@ -229,7 +230,6 @@ function HomeCard({ card }: { card: Card }) {
     setHovered(false);
     stopVideo();
   };
-  const handleTouch = (_e: React.PointerEvent) => { /* observer handles mobile */ };
 
   // Mobile: auto-play card video when scrolled into view instead of waiting for tap
   useEffect(() => {
@@ -256,20 +256,13 @@ function HomeCard({ card }: { card: Card }) {
 
   return (
     <article
-      ref={articleRef as React.Ref<HTMLElement>}
+      ref={articleRef}
       className="card"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onPointerDown={handleTouch}
     >
       <div className="card-media">
-        <img
-          src={card.image ?? eventPhoto}
-          alt="Event"
-          loading="lazy"
-          decoding="async"
-          style={card.imageContain ? { objectFit: "contain", background: "#f5f0e8" } : undefined}
-        />
+        <Image src={card.image} alt={card.title} sizes="(max-width: 768px) 100vw, 50vw" />
         {card.hoverVideo && !lowPower && (
           <video
             ref={videoRef}
@@ -298,9 +291,13 @@ function HomeCard({ card }: { card: Card }) {
   );
 }
 
-export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (v: boolean | ((p: boolean) => boolean)) => void }) {
+export default function HomeView() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  useEscape(closeMenu);
   useReveal();
   useLazyVideoLoader();
+
   return (
     <div className="page">
       {/* ===================== HERO ===================== */}
@@ -322,8 +319,8 @@ export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean;
         <div
           className="hero-graphic"
           style={{
-            WebkitMaskImage: `url(${hapMask})`,
-            maskImage: `url(${hapMask})`,
+            WebkitMaskImage: `url(${hapMask.src})`,
+            maskImage: `url(${hapMask.src})`,
           }}
           aria-label="Hapcraft"
         >
@@ -332,38 +329,7 @@ export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean;
       </header>
 
       {/* ===================== NAV OVERLAY ===================== */}
-      <nav
-        className={`nav-overlay${menuOpen ? " is-open" : ""}`}
-        aria-hidden={!menuOpen}
-        aria-label="Site navigation"
-      >
-        <div className="nav-overlay__top">
-          <Logo className="nav-logo" />
-          <button className="overlay-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" xmlns="http://www.w3.org/2000/svg">
-              <line x1="6" y1="6" x2="22" y2="22" />
-              <line x1="22" y1="6" x2="6" y2="22" />
-            </svg>
-          </button>
-        </div>
-        <div className="nav-overlay__links">
-          <svg className="nav-overlay__arrow" width="80" height="67" viewBox="0 0 120 100" fill="none" aria-hidden="true">
-            <path d="M12 10 L108 50 L12 90 L32 52 L12 10Z" fill="var(--orange)" opacity="0.9" />
-          </svg>
-          {(
-            [
-              { label: "Home",         to: "/" },
-              { label: "Our Work",     to: "/work" },
-              { label: "Our Services", to: "/services" },
-              { label: "About Us",     to: "/about" },
-            ] as const
-          ).map(({ label, to }) => (
-            <Link key={label} to={to} onClick={() => setMenuOpen(false)}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <NavOverlay open={menuOpen} onClose={closeMenu} />
 
       {/* ===================== INTRO ===================== */}
       <section className="intro reveal">
@@ -393,7 +359,7 @@ export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean;
               <p>Because in a market full of noise, being forgotten is the real loss.</p>
               <p>Ready to be unforgettable?</p>
             </div>
-            <Link className="contact-btn" to="/services">
+            <Link className="contact-btn" href="/services">
               Explore Our Services
             </Link>
           </div>
@@ -406,7 +372,7 @@ export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean;
           {/* All 4 cards in a 2-column grid */}
           <div className="work-cards-grid">
             {cards.map((card, i) => (
-              <div key={i} className="reveal" style={{ '--reveal-delay': `${i * 0.08}s` } as React.CSSProperties}>
+              <div key={card.title} className="reveal" style={{ '--reveal-delay': `${i * 0.08}s` } as React.CSSProperties}>
                 <HomeCard card={card} />
               </div>
             ))}
@@ -414,51 +380,30 @@ export default function HomePage({ menuOpen, setMenuOpen }: { menuOpen: boolean;
 
           <div className="work-cta">
             <div className="ap-cta-actions">
-            <Link className="view-more" to="/work">
-              Explore more
-            </Link>
-            <div className="ap-cta-socials">
-              <a href="https://www.instagram.com/hapcraftmedia?utm_source=qr&igsh=cHdmNHExMjQ2aWQ=" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Instagram">
-                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                </svg>
-              </a>
-              <a href="https://x.com/HapcraftMedia" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="X (Twitter)">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-              <a href="https://www.linkedin.com/company/hapcraftmedia/" target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="LinkedIn">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
-                </svg>
-              </a>
-              <a href="mailto:support@hapcraftmedia.com" className="ap-social-btn" aria-label="Email">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>
-                </svg>
-              </a>
-            </div>
+              <Link className="view-more" href="/work">
+                Explore more
+              </Link>
+              <SocialLinks />
             </div>
           </div>
         </div>
-    <div style={{ padding: "60px 20px", maxWidth: "900px", margin: "0 auto", color: "#fff" }}>
-    <p style={{ fontSize: "20px", fontWeight: "bold", textAlign: "center", marginBottom: "50px" }}>
-      Hapcraft (Hapcraft Media Private Limited) is a media production company that builds AI-powered ecosystems and executes world-class branding and marketing strategies to help businesses stand out.
-    </p>
+        <div style={{ padding: "60px 20px", maxWidth: "900px", margin: "0 auto", color: "#fff" }}>
+          <p style={{ fontSize: "20px", fontWeight: "bold", textAlign: "center", marginBottom: "50px" }}>
+            Hapcraft (Hapcraft Media Private Limited) is a media production company that builds AI-powered ecosystems and executes world-class branding and marketing strategies to help businesses stand out.
+          </p>
 
-    <h2 style={{ fontSize: "28px", marginBottom: "20px" }}>Frequently Asked Questions</h2>
+          <h2 style={{ fontSize: "28px", marginBottom: "20px" }}>Frequently Asked Questions</h2>
 
-    <div style={{ marginBottom: "20px" }}>
-      <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: What core technical services does Hapcraft provide?</h3>
-      <p style={{ fontSize: "18px" }}>A: We specialize in custom web development, building AI-powered business infrastructure, and implementing advanced AI automation to help your business scale efficiently.</p>
-    </div>
+          <div style={{ marginBottom: "20px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: What core technical services does Hapcraft provide?</h3>
+            <p style={{ fontSize: "18px" }}>A: We specialize in custom web development, building AI-powered business infrastructure, and implementing advanced AI automation to help your business scale efficiently.</p>
+          </div>
 
-    <div style={{ marginBottom: "20px" }}>
-      <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: How do you approach content creation for brands?</h3>
-      <p style={{ fontSize: "18px" }}>A: We focus on AI content creation and high-quality cinematographic media. We produce premium branded content designed specifically to make your brand stand out and dominate on social media.</p>
-    </div>
-  </div>  
+          <div style={{ marginBottom: "20px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "bold" }}>Q: How do you approach content creation for brands?</h3>
+            <p style={{ fontSize: "18px" }}>A: We focus on AI content creation and high-quality cinematographic media. We produce premium branded content designed specifically to make your brand stand out and dominate on social media.</p>
+          </div>
+        </div>
       </section>
 
       <SiteFooter />
