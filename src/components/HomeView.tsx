@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image, { type StaticImageData } from "next/image";
+import { preload } from "react-dom";
 import { useReveal } from "@/hooks/useReveal";
 import { useEscape } from "@/hooks/useEscape";
 import { FAQS } from "@/lib/site";
+import { responsiveSrc } from "@/lib/imageLoader";
 import hapMask from "@/assets/hap-mask.webp";
 import crowdAerial from "@/assets/crowd-aerial.webp";
 import govtMeeting from "@/assets/govt-meeting.webp";
@@ -30,6 +32,8 @@ const HERO_ID = "sux_1_nkr4ij";
 const CROWD_ID = "iams_vid_flkxaa"; // Arya Mahasammelan crowd hover video
 
 const hapVideo = `${CLOUDINARY}/${HERO_TX}/${HERO_ID}.mp4`;
+// Phones get a smaller file: the hero is about 430 px wide there, so 720 px is still sharp on a 2x screen.
+const hapVideoMobile = `${CLOUDINARY}/q_auto,f_auto,w_720/${HERO_ID}.mp4`;
 const hapPoster = `${CLOUDINARY}/so_0,w_1280,f_jpg,q_auto/${HERO_ID}.jpg`;
 const hapPosterMobile = `${CLOUDINARY}/so_0,w_720,f_jpg,q_auto/${HERO_ID}.jpg`;
 const crowdVideo = `${CLOUDINARY}/${CROWD_TX}/${CROWD_ID}.mp4`;
@@ -54,19 +58,36 @@ const useIsNarrowScreen = () => useMediaQuery("(max-width: 767px)");
 
 type LazyVideoProps = {
   src: string;
+  mobileSrc: string;
   poster: string;
-  mobilePoster?: string;
+  mobilePoster: string;
   className?: string;
 };
-function LazyVideo({ src, poster, mobilePoster, className }: LazyVideoProps) {
+// The hero video. Its source is picked by a tiny inline script that runs while the page is still being
+// parsed, so the download starts immediately instead of waiting for React to load and hydrate. The
+// effect covers client-side navigation to the home page, where inline scripts do not run.
+function LazyVideo({ src, mobileSrc, poster, mobilePoster, className }: LazyVideoProps) {
   const lowPower = useLowPowerDevice();
   const narrow = useIsNarrowScreen();
-  const activePoster = mobilePoster && narrow ? mobilePoster : poster;
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // The poster is the largest thing on screen at first paint, so start fetching it as early as possible.
+  preload(poster, { as: "image", fetchPriority: "high", media: "(min-width: 768px)" });
+  preload(mobilePoster, { as: "image", fetchPriority: "high", media: "(max-width: 767px)" });
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || v.getAttribute("src")) return;
+    v.poster = narrow ? mobilePoster : poster;
+    v.src = narrow ? mobileSrc : src;
+    v.play().catch(() => {});
+  }, [narrow, src, mobileSrc, poster, mobilePoster]);
+
   if (lowPower) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- remote video poster, not a site image
       <img
-        src={activePoster}
+        src={narrow ? mobilePoster : poster}
         alt=""
         className={className}
         loading="lazy"
@@ -75,17 +96,22 @@ function LazyVideo({ src, poster, mobilePoster, className }: LazyVideoProps) {
       />
     );
   }
+  const pick = `var v=document.currentScript.previousElementSibling,m=matchMedia("(max-width: 767px)").matches;v.poster=m?${JSON.stringify(mobilePoster)}:${JSON.stringify(poster)};v.src=m?${JSON.stringify(mobileSrc)}:${JSON.stringify(src)};`;
   return (
-    <video
-      className={className}
-      data-src={src}
-      poster={activePoster}
-      muted
-      loop
-      playsInline
-      preload="none"
-      data-lazy
-    />
+    <>
+      <video
+        ref={videoRef}
+        className={className}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        data-lazy
+        suppressHydrationWarning
+      />
+      <script dangerouslySetInnerHTML={{ __html: `(function(){${pick}})()` }} />
+    </>
   );
 }
 
@@ -320,12 +346,12 @@ export default function HomeView() {
         <div
           className="hero-graphic"
           style={{
-            WebkitMaskImage: `url(${hapMask.src})`,
-            maskImage: `url(${hapMask.src})`,
-          }}
+            "--mask-lg": `url(${hapMask.src})`,
+            "--mask-sm": `url(${responsiveSrc(hapMask.src, 1600)})`,
+          } as React.CSSProperties}
           aria-label="Hapcraft"
         >
-          <LazyVideo className="hero-video" src={hapVideo} poster={hapPoster} mobilePoster={hapPosterMobile} />
+          <LazyVideo className="hero-video" src={hapVideo} mobileSrc={hapVideoMobile} poster={hapPoster} mobilePoster={hapPosterMobile} />
         </div>
       </header>
 

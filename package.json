@@ -4,7 +4,9 @@
   "version": "0.2.0",
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/make-responsive-images.mjs",
     "build": "next build",
+    "prebuild": "node scripts/make-responsive-images.mjs",
     "start": "next start",
     "lint": "eslint",
     "brand-assets": "node scripts/make-brand-assets.mjs"

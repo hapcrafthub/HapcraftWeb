@@ -49,6 +49,9 @@
   opacity: 1;
   transition: opacity 0.55s cubic-bezier(0.4, 0, 1, 1);
 }
+html[data-intro="seen"] .il {
+  display: none;
+}
 .il--hide {
   opacity: 0;
   pointer-events: none;
@@ -194,7 +197,9 @@ img {
   aspect-ratio: 1595.89 / 718.32;
   pointer-events: none;
 
-  /* mask-image is set inline from the imported PNG; this just configures it */
+  /* --mask-lg / --mask-sm are set inline from the imported mask image (the small one is for phones) */
+  -webkit-mask-image: var(--mask-lg);
+          mask-image: var(--mask-lg);
   -webkit-mask-size: 100% 100%;
           mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -202,10 +207,15 @@ img {
   -webkit-mask-position: center;
           mask-position: center;
           mask-mode: alpha;
-
-  /* SVG morphology outline — 1 GPU pass instead of 9 drop-shadows */
-  filter: url(#hero-outline) drop-shadow(0 0 22px rgba(249, 246, 231, 0.18));
 }
+@media (max-width: 768px) {
+  .hero-graphic {
+    -webkit-mask-image: var(--mask-sm);
+            mask-image: var(--mask-sm);
+  }
+}
+/* The old "outline" SVG filter that lived here ran on the playing video every frame, but CSS applies
+   filters before masks, so the mask cut away everything it drew. Removing it changed nothing visible. */
 .hero-video {
   width: 100%;
   height: 100%;

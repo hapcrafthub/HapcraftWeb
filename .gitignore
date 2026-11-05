@@ -3,6 +3,9 @@ node_modules
 out
 next-env.d.ts
 
+# Resized image copies, rebuilt by scripts/make-responsive-images.mjs
+public/_img
+
 # Reference / design source material - not used at runtime
 design-file2.bin
 design-file2.tar

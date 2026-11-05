@@ -44,28 +44,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${poppins.variable} ${hanken.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${poppins.variable} ${hanken.variable}`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        {/* Marks a visitor who has already seen the intro this session, so CSS can hide it before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: 'try{if(sessionStorage.getItem("hap-intro")==="1")document.documentElement.dataset.intro="seen"}catch(e){}' }} />
       </head>
       <body>
         {/* Without JavaScript the intro cannot fade itself out and scroll reveals never fire, so show the page as it is. */}
         <noscript>
           <style>{".il{display:none}.reveal{opacity:1;transform:none}"}</style>
         </noscript>
-        <svg width="0" height="0" style={{ position: "absolute", overflow: "hidden" }} aria-hidden="true">
-          <defs>
-            <filter id="hero-outline" colorInterpolationFilters="sRGB" x="-5%" y="-5%" width="110%" height="110%">
-              <feMorphology in="SourceAlpha" operator="dilate" radius="4" result="expanded" />
-              <feFlood floodColor="#f9f6e7" result="color" />
-              <feComposite in="color" in2="expanded" operator="in" result="outline" />
-              <feMerge>
-                <feMergeNode in="outline" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-        </svg>
         <IntroLoader />
         {children}
       </body>
