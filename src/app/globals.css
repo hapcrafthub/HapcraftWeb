@@ -1739,6 +1739,10 @@ img {
   transition: color 0.18s ease;
   min-width: 0;
   overflow-wrap: anywhere;
+  /* bigger tap area on touch screens without moving anything */
+  display: inline-block;
+  padding: 12px 10px;
+  margin: -12px -10px;
 }
 .site-footer__email:hover { color: var(--orange); }
 
